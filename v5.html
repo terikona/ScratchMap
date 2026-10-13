@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<!--
+  This chart was created with Chart Maker by amCharts
+  https://live.amcharts.com
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grouped Countries Map</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #ffffff; }
+    #chartdiv { width: 100%; height: 100vh; }
+  </style>
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/plugins/json.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Responsive.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/geodata/worldHigh.js"></script>
+</head>
+<body>
+  <div id="chartdiv"></div>
+  <script>
+    am5.ready(function () {
+      var root = am5.Root.new("chartdiv");
+
+      root.setThemes([
+        am5themes_Responsive.new(root)
+      ]);
+
+      var config = {
+        "type": "MapChart",
+        "settings": {
+          "minZoomLevel": 0.5,
+          "autoHome": true,
+          "homeZoomLevel": 5,
+          "homeGeoPoint": {
+            "latitude": 50,
+            "longitude": 20
+          },
+          "tooltip": {
+            "type": "Tooltip",
+            "settings": {
+              "background": {
+                "type": "PointedRectangle",
+                "settings": {
+                  "themeTags": [
+                    "tooltip",
+                    "background"
+                  ],
+                  "strokeOpacity": 1,
+                  "cornerRadius": 30,
+                  "fillOpacity": 0.67,
+                  "strokeWidth": 0,
+                  "shadowOpacity": 1,
+                  "shadowBlur": 4,
+                  "shadowOffsetX": 2,
+                  "shadowOffsetY": 2
+                }
+              },
+              "getFillFromSprite": true,
+              "getStrokeFromSprite": false,
+              "pointerOrientation": "auto"
+            }
+          },
+          "panX": "translateX",
+          "homeRotationX": 0,
+          "width": {
+            "type": "Percent",
+            "value": 100
+          },
+          "height": {
+            "type": "Percent",
+            "value": 100
+          }
+        },
+        "properties": {
+          "series": [
+            "#series-0",
+            "#series-1",
+            "#series-2",
+            "#series-3",
+            "#series-4",
+            "#series-5",
+            "#series-6",
+            "#series-7",
+            "#series-8",
+            "#series-9",
+            "#series-10"
+          ]
+        },
+        "children": [
+          {
+            "type": "Legend",
+            "settings": {
+              "useDefaultMarker": true,
+              "centerX": {
+                "type": "Percent",
+                "value": 50
+              },
+              "x": {
+                "type": "Percent",
+                "value": 50
+              },
+              "centerY": {
+                "type": "Percent",
+                "value": 100
+              },
+              "y": {
+                "type": "Percent",
+                "value": 100
+              },
+              "dy": -20,
+              "background": {
+                "type": "RoundedRectangle",
+                "settings": {
+                  "fill": "@root.interfaceColors.get('background')",
+                  "fillOpacity": 0.7
+                }
+              }
+            },
+            "properties": {
+              "data": [
+                "#series-3",
+                "#series-4",
+                "#series-5",
+                "#series-6"
+              ],
+              "valueLabels": {
+                "properties": {
+                  "template": {
+                    "settings": {
+                      "forceHidden": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "refs": [
+          {
+            "data-0": [
+              {
+                "geometry": {
+                  "type": "GeoRectangle",
+                  "north": 90,
+                  "east": 180,
+                  "south": -90,
+                  "west": -180
+                },
+                "__parse": true
+              }
+            ]
+          },
+          {
+            "data-1": []
+          },
+          {
+            "data-2": [
+              {
+                "id": "UA",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              },
+              {
+                "id": "TR",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              },
+              {
+                "id": "RS",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              },
+              {
+                "id": "ME",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              },
+              {
+                "id": "MK",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              },
+              {
+                "id": "MD",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              },
+              {
+                "id": "XK",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              },
+              {
+                "id": "GB",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              },
+              {
+                "id": "CH",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              },
+              {
+                "id": "BA",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              },
+              {
+                "id": "AL",
+                "settings": {
+                  "fill": {
+                    "type": "Color",
+                    "value": "#8067dc"
+                  },
+                  "fillOpacity": 1,
+                  "stroke": {
+                    "type": "Color",
+                    "value": "#ffffff"
+                  },
+                  "strokeOpacity": 1,
+                  "strokeWidth": 1,
+                  "__parse": true
+                },
+                "__parse": true
+              }
+            ]
+          },
+          {
+            "data-3": []
+          },
+          {
+            "data-4": [
+              {
+                "sourceId": "US",
+                "targetId": "GB",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "data-5": [
+              {
+                "id": "Kyiv",
+                "name": "Kyiv",
+                "latitude": 50.450001,
+                "longitude": 30.523333
+              },
+              {
+                "id": "GB",
+                "name": "United Kingdom",
+                "latitude": 53.97691215024814,
+                "longitude": -2.751746692061021
+              }
+            ]
+          },
+          {
+            "data-6": [
+              {
+                "pointIds": [
+                  "Kyiv",
+                  "GB"
+                ],
+                "__parse": true
+              }
+            ]
+          },
+          {
+            "template-0": {
+              "type": "Template"
+            }
+          },
+          {
+            "series-0": {
+              "type": "MapPolygonSeries",
+              "settings": {
+                "name": "Background",
+                "affectsBounds": false,
+                "geometryField": "geometry",
+                "geometryTypeField": "geometryType",
+                "idField": "id",
+                "interpolationDuration": 0,
+                "interactiveChildren": true,
+                "setStateOnChildren": false,
+                "scale": 1,
+                "opacity": 1,
+                "rotation": 0,
+                "position": "relative",
+                "tooltipX": {
+                  "type": "Percent",
+                  "value": 50
+                },
+                "tooltipY": {
+                  "type": "Percent",
+                  "value": 50
+                },
+                "tooltipPosition": "fixed",
+                "isMeasured": true,
+                "stateAnimationDuration": 0
+              },
+              "properties": {
+                "data": "#data-0",
+                "mapPolygons": {
+                  "properties": {
+                    "template": {
+                      "settings": {
+                        "fill": "@root.interfaceColors.get('alternativeBackground')",
+                        "fillOpacity": 0.05,
+                        "strokeOpacity": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "series-1": {
+              "type": "GraticuleSeries",
+              "settings": {
+                "name": "Graticule",
+                "affectsBounds": false,
+                "step": 10,
+                "lineTypeField": "lineType",
+                "pointIdsField": "pointIds",
+                "geometryField": "geometry",
+                "geometryTypeField": "geometryType",
+                "idField": "id",
+                "interpolationDuration": 0,
+                "interactiveChildren": true,
+                "setStateOnChildren": false,
+                "scale": 1,
+                "opacity": 1,
+                "rotation": 0,
+                "position": "relative",
+                "tooltipX": {
+                  "type": "Percent",
+                  "value": 50
+                },
+                "tooltipY": {
+                  "type": "Percent",
+                  "value": 50
+                },
+                "tooltipPosition": "fixed",
+                "isMeasured": true,
+                "stateAnimationDuration": 0
+              },
+              "properties": {
+                "mapLines": {
+                  "properties": {
+                    "template": {
+                      "settings": {
+                        "strokeOpacity": 0.08,
+                        "stroke": "@root.interfaceColors.get('alternativeBackground')"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "series-2": {
+              "type": "MapPolygonSeries",
+              "settings": {
+                "geoJSON": am5geodata_worldHigh,
+                "exclude": [
+                  "AQ"
+                ],
+                "linkTarget": "_blank",
+                "heatRules": []
+              },
+              "properties": {
+                "data": "#data-2",
+                "mapPolygons": {
+                  "properties": {
+                    "template": {
+                      "settings": {
+                        "fill": {
+                          "type": "Color",
+                          "value": "#b2b2b2"
+                        },
+                        "templateField": "settings"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "series-3": {
+              "type": "MapPolygonSeries",
+              "settings": {
+                "geoJSON": am5geodata_worldHigh,
+                "include": [
+                  "AT",
+                  "IE",
+                  "DK",
+                  "FI",
+                  "SE",
+                  "IT",
+                  "FR",
+                  "ES",
+                  "GR",
+                  "DE",
+                  "BE",
+                  "LU",
+                  "NL",
+                  "PT"
+                ],
+                "name": "Joined before 2004",
+                "fill": {
+                  "type": "Color",
+                  "value": "#6771dc"
+                }
+              },
+              "properties": {
+                "mapPolygons": {
+                  "properties": {
+                    "template": {
+                      "settings": {
+                        "tooltipText": "[bold]{name}[/]\nMember since {joined}",
+                        "interactive": true,
+                        "strokeWidth": 1
+                      },
+                      "states": [
+                        {
+                          "key": "hover",
+                          "settings": {
+                            "fill": {
+                              "type": "Color",
+                              "value": "#252f9a"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "series-4": {
+              "type": "MapPolygonSeries",
+              "settings": {
+                "geoJSON": am5geodata_worldHigh,
+                "include": [
+                  "LT",
+                  "LV",
+                  "CZ",
+                  "SK",
+                  "SI",
+                  "EE",
+                  "HU",
+                  "CY",
+                  "MT",
+                  "PL"
+                ],
+                "name": "Joined in 2004",
+                "fill": {
+                  "type": "Color",
+                  "value": "#a367dc"
+                }
+              },
+              "properties": {
+                "mapPolygons": {
+                  "properties": {
+                    "template": {
+                      "settings": {
+                        "tooltipText": "[bold]{name}[/]\nMember since {joined}",
+                        "interactive": true,
+                        "strokeWidth": 1
+                      },
+                      "states": [
+                        {
+                          "key": "hover",
+                          "settings": {
+                            "fill": {
+                              "type": "Color",
+                              "value": "#61259a"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "series-5": {
+              "type": "MapPolygonSeries",
+              "settings": {
+                "geoJSON": am5geodata_worldHigh,
+                "include": [
+                  "RO",
+                  "BG"
+                ],
+                "name": "Joined in 2007",
+                "fill": {
+                  "type": "Color",
+                  "value": "#dc67ce"
+                }
+              },
+              "properties": {
+                "mapPolygons": {
+                  "properties": {
+                    "template": {
+                      "settings": {
+                        "tooltipText": "[bold]{name}[/]\nMember since {joined}",
+                        "interactive": true,
+                        "strokeWidth": 1
+                      },
+                      "states": [
+                        {
+                          "key": "hover",
+                          "settings": {
+                            "fill": {
+                              "type": "Color",
+                              "value": "#9a258c"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "series-6": {
+              "type": "MapPolygonSeries",
+              "settings": {
+                "geoJSON": am5geodata_worldHigh,
+                "include": [
+                  "HR"
+                ],
+                "name": "Joined in 2013",
+                "fill": {
+                  "type": "Color",
+                  "value": "#dc6788"
+                }
+              },
+              "properties": {
+                "mapPolygons": {
+                  "properties": {
+                    "template": {
+                      "settings": {
+                        "tooltipText": "[bold]{name}[/]\nMember since {joined}",
+                        "interactive": true,
+                        "strokeWidth": 1
+                      },
+                      "states": [
+                        {
+                          "key": "hover",
+                          "settings": {
+                            "fill": {
+                              "type": "Color",
+                              "value": "#9a2546"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "series-7": {
+              "type": "MapSankeySeries",
+              "settings": {
+                "name": "Flows",
+                "polygonSeries": "#series-2",
+                "maxWidth": 1.6725240000000001,
+                "nodeWidth": 2.230032,
+                "visible": false
+              },
+              "properties": {
+                "data": "#data-4",
+                "mapPolygons": {
+                  "properties": {
+                    "template": {
+                      "settings": {
+                        "fill": {
+                          "type": "Color",
+                          "value": "#a367dc"
+                        },
+                        "fillOpacity": 0.75,
+                        "strokeOpacity": 0
+                      }
+                    }
+                  }
+                },
+                "nodes": {
+                  "properties": {
+                    "mapPolygons": {
+                      "properties": {
+                        "template": {
+                          "settings": {
+                            "fill": {
+                              "type": "Color",
+                              "value": "#6771dc"
+                            },
+                            "stroke": {
+                              "type": "Color",
+                              "value": "#ffffff"
+                            },
+                            "strokeWidth": 1.6
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "series-8": {
+              "type": "MapPointSeries",
+              "settings": {
+                "name": "Points",
+                "longitudeField": "longitude",
+                "latitudeField": "latitude",
+                "lineIdField": "lineId",
+                "positionOnLineField": "positionOnLine",
+                "autoRotateField": "autoRotate",
+                "autoRotateAngleField": "autoRotateAngle",
+                "geometryField": "geometry",
+                "geometryTypeField": "geometryType",
+                "idField": "id",
+                "affectsBounds": false,
+                "clipFront": false,
+                "clipBack": true,
+                "autoScale": false,
+                "interpolationDuration": 0,
+                "interactiveChildren": true,
+                "setStateOnChildren": false,
+                "scale": 1,
+                "opacity": 1,
+                "rotation": 0,
+                "position": "relative",
+                "tooltipX": {
+                  "type": "Percent",
+                  "value": 50
+                },
+                "tooltipY": {
+                  "type": "Percent",
+                  "value": 50
+                },
+                "tooltipPosition": "fixed",
+                "isMeasured": true,
+                "stateAnimationDuration": 0
+              },
+              "properties": {
+                "data": "#data-5",
+                "bullets": [
+                  {
+                    "type": "Bullet",
+                    "settings": {
+                      "sprite": {
+                        "type": "Star",
+                        "settings": {
+                          "radius": 5,
+                          "innerRadius": {
+                            "type": "Percent",
+                            "value": 50
+                          },
+                          "spikes": 4,
+                          "strokeOpacity": 1,
+                          "fillOpacity": 1,
+                          "tooltipText": "{name}",
+                          "fill": {
+                            "type": "Color",
+                            "value": "#000000"
+                          },
+                          "stroke": {
+                            "type": "Color",
+                            "value": "#ffffff"
+                          },
+                          "strokeWidth": 2,
+                          "centerX": {
+                            "type": "Percent",
+                            "value": 50
+                          },
+                          "centerY": {
+                            "type": "Percent",
+                            "value": 50
+                          }
+                        },
+                        "properties": {
+                          "template": "#template-0"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "series-9": {
+              "type": "MapLineSeries",
+              "settings": {
+                "name": "Lines",
+                "pointSeries": "#series-8",
+                "visible": false
+              },
+              "properties": {
+                "data": "#data-6",
+                "mapLines": {
+                  "properties": {
+                    "template": {
+                      "settings": {
+                        "stroke": {
+                          "type": "Color",
+                          "value": "#a367dc"
+                        },
+                        "strokeOpacity": 0.9,
+                        "strokeWidth": 1.5
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "series-10": {
+              "type": "MapPointSeries",
+              "settings": {
+                "name": "Labels",
+                "latitudeField": "latitude",
+                "longitudeField": "longitude"
+              },
+              "properties": {
+                "bullets": [
+                  {
+                    "type": "Bullet",
+                    "settings": {
+                      "sprite": {
+                        "type": "Label",
+                        "settings": {
+                          "templateField": "settings",
+                          "centerX": {
+                            "type": "Percent",
+                            "value": 50
+                          },
+                          "centerY": {
+                            "type": "Percent",
+                            "value": 50
+                          },
+                          "populateText": true,
+                          "background": {
+                            "type": "RoundedRectangle",
+                            "settings": {
+                              "templateField": "background"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      };
+
+      am5plugins_json.JsonParser.new(root)
+        .parse(config, { parent: root.container })
+        .catch(function (e) {
+          console.error("amCharts: the chart config failed to parse — nothing was rendered.", e);
+        });
+    });
+  </script>
+</body>
+</html>
