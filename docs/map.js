@@ -2,9 +2,10 @@
 <!-- Styles -->
 <style>
 #chartdiv {
-  width: 100%;
-  height: 100%;
-//  height: 500px;
+ // width: 100%;
+  width: 1400px;
+//  height: 100%;
+  height: 700px;
 
 }
 </style>
