@@ -3,7 +3,7 @@
 <style>
 #chartdiv {
  // width: 100%;
-  width: 700px;
+  width: 1400px;
 //  height: 100%;
   height: 700px;
 
