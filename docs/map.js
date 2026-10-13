@@ -225,7 +225,7 @@ var groupData = [
       }, {
         "title": "Greece",
         "id": "GR",
-        "customData": "planned to be visited in winter"
+        "customData": "planned to be visited in 十月か十一月"
       }, {
         "title": "Ireland",
         "id": "IE",
