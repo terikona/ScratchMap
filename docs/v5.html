@@ -238,7 +238,7 @@ var pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
 
 // A star, the usual atlas symbol for a capital. All stars share this template, so they can be changed at once.
 var starTemplate = am5.Template.new({
-  radius: 4.5, // 6px from the center to the tips...
+  radius: 4, // 6px from the center to the tips...
   innerRadius: am5.percent(45), // ...with the dents at 45% of that
   spikes: 4, // five points
   fill: colors.getIndex(10),
@@ -279,7 +279,7 @@ pointSeries.bullets.push(function () {
 labelTemplate.set("forceHidden", true);
 
 chart.on("zoomLevel", function (zoomLevel) {
-  labelTemplate.set("forceHidden", zoomLevel < 9); // the names show from zoom level 3
+  labelTemplate.set("forceHidden", zoomLevel < 3); // the names show from zoom level 3
 });
 
 // Capitals of the world's countries
@@ -331,7 +331,6 @@ var credit = chart.children.push(am5.Label.new(root, {
 //am5.ready(function() {
 
 // Data: the 27 members of the European Union, grouped by when they joined
-
 var groupData = [
   {
     "name": "Joined before 2004",
@@ -475,6 +474,12 @@ zoomControl.homeButton.events.on("click", goBack);
 
 <!-- HTML -->
 <div id="chartdiv"></div>
+
+<button onclick="window.location.href='index.html'">
+  Open test version
+</button>
+
+
 
 
 
