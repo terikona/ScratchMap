@@ -348,6 +348,34 @@ am5.array.each(groupData, function(group) {
   //  strokeWidth: 1     // 1px borders
   //});
   
+  
+  
+  
+   polygonSeries.mapPolygons.template.states.create("hover", {
+    fill: am5.Color.brighten(color, -0.3) // a darker shade of the group's color
+  });
+
+  // hovering one country highlights every country in its group
+  //polygonSeries.mapPolygons.template.events.on("pointerover", function(ev) {
+  //  ev.target.series.mapPolygons.each(function(polygon) {
+  //    polygon.states.applyAnimate("hover");
+  //  });
+  //});
+
+  polygonSeries.mapPolygons.template.events.on("pointerout", function(ev) {
+    ev.target.series.mapPolygons.each(function(polygon) {
+      polygon.states.applyAnimate("default");
+    });
+  });
+  polygonSeries.data.setAll(group.data);
+
+  legend.data.push(polygonSeries); // one legend item per group
+});
+
+  
+  
+  
+  
 // Create point series for the capitals
 // https://www.amcharts.com/docs/v5/charts/map-chart/map-point-series/
 var pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
@@ -438,27 +466,7 @@ var credit = chart.children.push(am5.Label.new(root, {
 
 
 
-  polygonSeries.mapPolygons.template.states.create("hover", {
-    fill: am5.Color.brighten(color, -0.3) // a darker shade of the group's color
-  });
-
-  // hovering one country highlights every country in its group
-  //polygonSeries.mapPolygons.template.events.on("pointerover", function(ev) {
-  //  ev.target.series.mapPolygons.each(function(polygon) {
-  //    polygon.states.applyAnimate("hover");
-  //  });
-  //});
-
-  polygonSeries.mapPolygons.template.events.on("pointerout", function(ev) {
-    ev.target.series.mapPolygons.each(function(polygon) {
-      polygon.states.applyAnimate("default");
-    });
-  });
-  polygonSeries.data.setAll(group.data);
-
-  legend.data.push(polygonSeries); // one legend item per group
-});
-
+ 
 
 // back to the world map: zoom out and swap the country for the world
 function goBack() {
@@ -473,17 +481,6 @@ backContainer.events.on("click", goBack);
 // the zoom control's home button goes back to the world map too
 zoomControl.homeButton.events.on("click", goBack);
 }); // end am5.ready()
-
-
-
-
-
-
-
-
-
-
-
 
 
 
