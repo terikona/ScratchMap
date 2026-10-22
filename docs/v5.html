@@ -196,14 +196,32 @@ function openCountry(countryId, groupColor) {
       data.map + ".json",
       chart
     )
+    
+    
+    
   ]).then(function(results) {
     var geodata = am5.JSONParser.parse(results[1].response);
+
+
+ // Приховуємо всі кольорові полігони цілих країн
+    groupPolygonSeries.forEach(function(series) {
+      series.hide(0);
+    });
+
+var regionColor = groupColor || am5.color(0xaaaaaa);
 
     // Відображаємо карту регіонів
     countrySeries.setAll({
       geoJSON: geodata,
-      fill: groupColor || am5.color(0xaaaaaa)
+      fill: regionColor
     });
+    
+    // Затінюємо колір регіонів при наведенні
+regionHoverState.set(
+  "fill",
+  am5.Color.brighten(regionColor, -0.3)
+);
+
 
     countrySeries.show();
     worldSeries.hide(100);
@@ -235,9 +253,10 @@ countrySeries.mapPolygons.template.setAll({
   fill: am5.color(0xaaaaaa) // gray until a click sets the continent's color
 });
 
-countrySeries.mapPolygons.template.states.create("hover", {
-  fill: colors.getIndex(9)
-});
+var regionHoverState =
+  countrySeries.mapPolygons.template.states.create("hover", {
+    fill: am5.color(0x777777) // тимчасовий колір
+  });
 
 // Set up data for countries
 var data = [];
@@ -321,6 +340,7 @@ var groupData = [
   {
     name: "Ukraine",
     status: "Home",
+      color: "#A469CF",
     data: [
       { id: "UA" }
     ]
@@ -328,6 +348,7 @@ var groupData = [
   {
     name: "Visited",
     status: "Visited in ",
+      color: "#93CF69",
     data: [
       { id: "LT", year: "2004" },
       { id: "LV", year: "2004" },
@@ -341,6 +362,7 @@ var groupData = [
   {
     name: "Plan to visit nearest time",
     status: "Plan to visit in ",
+      color: "#69C7CF",
     data: [
       { id: "RO", year: "2007" },
       { id: "BG", year: "2007" }
@@ -349,6 +371,7 @@ var groupData = [
   {
     name: "List to visit",
     status: "Plan to visit in ",
+      color: "#CF7169",
     data: [
       { id: "HR", year: "2013" }
     ]
@@ -398,9 +421,18 @@ legend.valueLabels.template.set("forceHidden", true) // no value labels in the l
 //});
 //colors.next(); // ...skipping the first one
 
+// Зберігаємо всі кольорові серії груп країн
+var groupPolygonSeries = [];
+
+
+
+
+// Create series for each group
 am5.array.each(groupData, function(group) {
   var countries = [];
-  var color = colors.next();
+var color = am5.color(
+  parseInt(group.color.replace("#", ""), 16)
+);
   am5.array.each(group.data, function(country) {
     countries.push(country.id)
   });
@@ -414,6 +446,7 @@ am5.array.each(groupData, function(group) {
     name: group.name,
     fill: color // in the group's color
   }));
+  groupPolygonSeries.push(polygonSeries);
   
 polygonSeries.mapPolygons.template.events.on("click", function(ev) {
   var dataItem = ev.target.dataItem;
@@ -550,8 +583,18 @@ var credit = chart.children.push(am5.Label.new(root, {
 // back to the world map: zoom out and swap the country for the world
 function goBack() {
   chart.goHome();
-  worldSeries.show();
+
+  // Приховуємо регіональну карту
   countrySeries.hide();
+
+  // Повертаємо загальну карту світу
+  worldSeries.show();
+
+  // Повертаємо кольорові групи країн
+  groupPolygonSeries.forEach(function(series) {
+    series.show(0);
+  });
+
   backContainer.hide();
 }
 
@@ -560,7 +603,6 @@ backContainer.events.on("click", goBack);
 // the zoom control's home button goes back to the world map too
 zoomControl.homeButton.events.on("click", goBack);
 }); // end am5.ready()
-
 
 
 
