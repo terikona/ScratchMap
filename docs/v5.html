@@ -43,6 +43,7 @@ root.setThemes([
   am5themes_Responsive.new(root)
 ]);
 
+
 // Create the map chart
 // https://www.amcharts.com/docs/v5/charts/map-chart/
 var chart = root.container.children.push(am5map.MapChart.new(root, {
@@ -50,9 +51,19 @@ var chart = root.container.children.push(am5map.MapChart.new(root, {
   // go to the home view once the map is fitted
   autoHome: true,
   panX: "rotateX",                   // dragging sideways turns the world, so the map wraps around
-  projection: am5map.geoEqualEarth() // a world map that keeps the countries' areas true to size
+  panY: "rotateY", 
+  projection: am5map.geoMercator() // a world map that keeps the countries' areas true to size
 }));
 
+
+// Center map to Europe on the map initiation
+var chart = root.container.children.push(
+  am5map.MapChart.new(root, {
+    homeZoomLevel: 4.5,
+    homeGeoPoint: { longitude: 20, latitude: 50 },
+    autoHome: true
+  })
+);
 // Zoom control
 // https://www.amcharts.com/docs/v5/charts/map-chart/map-pan-zoom/#Zoom_control
 var zoomControl = chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
@@ -92,11 +103,12 @@ graticuleSeries.mapLines.template.setAll({
 // https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/
 var worldSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
   geoJSON: am5geodata_worldLow,
-  exclude: ["AQ"] // no Antarctica
+  exclude: ["AQ"] // no Antarctica or ["AQ", "RU"]
 }));
 
 worldSeries.mapPolygons.template.setAll({
-//  tooltipText: "{name}",     // the country's name on hover
+ // tooltipText: "{name} {joined}",     // the country's name on hover
+  tooltipText: "[bold]{name}[/]\nMember since {joined}", // the name in bold, then the year it joined
   interactive: true,         // reacts to hover and clicks
   fill: am5.color(0xaaaaaa), // gray, for countries without a map to drill into
   // countries with a map of their own take their continent's color from polygonSettings in the data
@@ -105,8 +117,13 @@ worldSeries.mapPolygons.template.setAll({
 
 // a country turns a palette color under the pointer
 worldSeries.mapPolygons.template.states.create("hover", {
-  fill: colors.getIndex(9)
+  fill: colors.getIndex(9),
 });
+
+
+
+
+
 
 // a click zooms in on the country and loads the map of its regions
 worldSeries.mapPolygons.template.events.on("click", (ev) => {
@@ -138,7 +155,7 @@ var countrySeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
 }));
 
 countrySeries.mapPolygons.template.setAll({
-  tooltipText: "{name}",    // the region's name on hover
+//  tooltipText: "{name}",    // the region's name on hover
   interactive: true,        // reacts to hover
   fill: am5.color(0xaaaaaa) // gray until a click sets the continent's color
 });
@@ -165,6 +182,12 @@ for(var id in am5geodata_data_countries2) {
   }
 }
 worldSeries.data.setAll(data);
+
+
+
+
+
+
 
 // Add a button to go back to the world map
 var backContainer = chart.children.push(am5.Container.new(root, {
@@ -200,15 +223,24 @@ var backButton = backContainer.children.push(am5.Graphics.new(root, {
 }));
 
 
+
+
+
+
+
+
+
+
+
 // Create point series for the capitals
 // https://www.amcharts.com/docs/v5/charts/map-chart/map-point-series/
 var pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
 
 // A star, the usual atlas symbol for a capital. All stars share this template, so they can be changed at once.
 var starTemplate = am5.Template.new({
-  radius: 6, // 6px from the center to the tips...
+  radius: 4.5, // 6px from the center to the tips...
   innerRadius: am5.percent(45), // ...with the dents at 45% of that
-  spikes: 5, // five points
+  spikes: 4, // five points
   fill: colors.getIndex(10),
   stroke: root.interfaceColors.get("background"), // outlined in the background color...
   strokeWidth: 1, // ...1px wide
@@ -247,7 +279,7 @@ pointSeries.bullets.push(function () {
 labelTemplate.set("forceHidden", true);
 
 chart.on("zoomLevel", function (zoomLevel) {
-  labelTemplate.set("forceHidden", zoomLevel < 3); // the names show from zoom level 3
+  labelTemplate.set("forceHidden", zoomLevel < 9); // the names show from zoom level 3
 });
 
 // Capitals of the world's countries
@@ -299,6 +331,7 @@ var credit = chart.children.push(am5.Label.new(root, {
 //am5.ready(function() {
 
 // Data: the 27 members of the European Union, grouped by when they joined
+
 var groupData = [
   {
     "name": "Joined before 2004",
@@ -396,23 +429,23 @@ am5.array.each(groupData, function(group) {
     fill: color // in the group's color
   }));
 
-  polygonSeries.mapPolygons.template.setAll({
-    tooltipText: "[bold]{name}[/]\nMember since {joined}", // the name in bold, then the year it joined
-    interactive: true, // reacts to hover
-    fill: color,
-    strokeWidth: 1     // 1px borders
-  });
+  //polygonSeries.mapPolygons.template.setAll({
+  //  tooltipText: "[bold]{name}[/]\nMember since {joined}", // the name in bold, then the year it joined
+  //  interactive: true, // reacts to hover
+  //  fill: color,
+  //  strokeWidth: 1     // 1px borders
+  //});
 
   polygonSeries.mapPolygons.template.states.create("hover", {
     fill: am5.Color.brighten(color, -0.3) // a darker shade of the group's color
   });
 
   // hovering one country highlights every country in its group
-  polygonSeries.mapPolygons.template.events.on("pointerover", function(ev) {
-    ev.target.series.mapPolygons.each(function(polygon) {
-      polygon.states.applyAnimate("hover");
-    });
-  });
+  //polygonSeries.mapPolygons.template.events.on("pointerover", function(ev) {
+  //  ev.target.series.mapPolygons.each(function(polygon) {
+  //    polygon.states.applyAnimate("hover");
+  //  });
+  //});
 
   polygonSeries.mapPolygons.template.events.on("pointerout", function(ev) {
     ev.target.series.mapPolygons.each(function(polygon) {
