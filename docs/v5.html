@@ -2,8 +2,7 @@
 <style>
 #chartdiv {
   width: 100%;
-//  height: 800px;
-  height: 100%;
+  height: 800px;
   font-size: 0.875rem;
 }
 </style>
@@ -50,7 +49,7 @@ root.setThemes([
 var chart = root.container.children.push(am5map.MapChart.new(root, {
   minZoomLevel: 0.5,                 // zoom out to half the fitted size at most
   // go to the home view once the map is fitted
-  autoHome: true,
+ // autoHome: true,
   panX: "rotateX",                   // dragging sideways turns the world, so the map wraps around
   panY: "rotateY", 
   projection: am5map.geoMercator() // a world map that keeps the countries' areas true to size
@@ -81,7 +80,8 @@ var waterSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
 
 waterSeries.mapPolygons.template.setAll({
   fill: root.interfaceColors.get("alternativeBackground"), // dark on a light background, light on a dark one
-  fillOpacity: 0.05, // barely there
+  fillOpacity: 0.99, // barely there
+   fill: am5.color(0x89CFF0),
   strokeOpacity: 0   // no outline
 });
 
@@ -91,14 +91,14 @@ waterSeries.data.push({
 
 // Create graticule series: grid lines every 10 degrees
 // https://www.amcharts.com/docs/v5/charts/map-chart/graticule-series/
-var graticuleSeries = chart.series.push(am5map.GraticuleSeries.new(root, {
-  step: 10
-}));
+//var graticuleSeries = chart.series.push(am5map.GraticuleSeries.new(root, {
+//  step: 10
+//}));
 
-graticuleSeries.mapLines.template.setAll({
-  stroke: root.interfaceColors.get("alternativeBackground"), // dark on a light background, light on a dark one
-  strokeOpacity: 0.08 // very faint
-});
+//graticuleSeries.mapLines.template.setAll({
+//  stroke: root.interfaceColors.get("alternativeBackground"), // dark on a light background, light on a dark one
+ // strokeOpacity: 0.08 // very faint
+//});
 
 // Create polygon series for the world map
 // https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/
@@ -334,22 +334,9 @@ var credit = chart.children.push(am5.Label.new(root, {
 // Data: the 27 members of the European Union, grouped by when they joined
 var groupData = [
   {
-    "name": "Joined before 2004",
+    "name": "Ukraine",
     "data": [
-      { "id": "AT", "joined": "1995"},
-      { "id": "IE", "joined": "1973"},
-      { "id": "DK", "joined": "1973"},
-      { "id": "FI", "joined": "1995"},
-      { "id": "SE", "joined": "1995"},
-      { "id": "IT", "joined": "1957"},
-      { "id": "FR", "joined": "1957"},
-      { "id": "ES", "joined": "1986"},
-      { "id": "GR", "joined": "1981"},
-      { "id": "DE", "joined": "1957"},
-      { "id": "BE", "joined": "1957"},
-      { "id": "LU", "joined": "1957"},
-      { "id": "NL", "joined": "1957"},
-      { "id": "PT", "joined": "1986"}
+      { "id": "UA"}
    ]
   }, {
     "name": "Joined in 2004",
@@ -363,7 +350,20 @@ var groupData = [
       { "id": "HU", "joined": "2004" },
       { "id": "CY", "joined": "2004" },
       { "id": "MT", "joined": "2004" },
-      { "id": "PL", "joined": "2004" }
+      { "id": "PL", "joined": "2004" },
+      { "id": "IE", "joined": "1973"},
+      { "id": "DK", "joined": "1973"},
+      { "id": "FI", "joined": "1995"},
+      { "id": "SE", "joined": "1995"},
+      { "id": "IT", "joined": "1957"},
+      { "id": "FR", "joined": "1957"},
+      { "id": "ES", "joined": "1986"},
+      { "id": "GR", "joined": "1981"},
+      { "id": "DE", "joined": "1957"},
+      { "id": "BE", "joined": "1957"},
+      { "id": "LU", "joined": "1957"},
+      { "id": "NL", "joined": "1957"},
+      { "id": "PT", "joined": "1986"}
     ]
   }, {
     "name": "Joined in 2007",
