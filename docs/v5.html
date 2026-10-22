@@ -19,17 +19,7 @@
 <script>
 am5.ready(function() {
 
-// continent codes as color indexes, so each continent gets its own color: spread over the palette, so that
-// continents next to each other get colors far apart, and none takes the hover color (9)
-//var continents = {
- // "AF": 0,
-//  "AN": 3,
-//  "AS": 4,
-//  "EU": 6,
-//  "NA": 2,
-//  "OC": 1,
- // "SA": 7
-//}
+
 
 // Create root element
 // https://www.amcharts.com/docs/v5/getting-started/#Root_element
@@ -130,18 +120,6 @@ worldSeries.mapPolygons.template.states.create("hover", {
 });
 
 
-
-
-
-// a country turns a palette color under the pointer
-//worldSeries.mapPolygons.template.states.create("hover", {
-//  fill: colors.getIndex(9),
-//});
-
-
-
-
-
 // a click zooms in on the country and loads the map of its regions
 worldSeries.mapPolygons.template.events.on("click", function(ev) {
   var dataItem = ev.target.dataItem;
@@ -150,12 +128,6 @@ worldSeries.mapPolygons.template.events.on("click", function(ev) {
     openCountry(dataItem.dataContext.id);
   }
 });
-
-
-
-
-
-
 
 
 
@@ -238,15 +210,6 @@ regionHoverState.set(
 
 
 
-
-
-
-
-
-
-
-
-
 countrySeries.mapPolygons.template.setAll({
 //  tooltipText: "{name}",    // the region's name on hover
   interactive: true,        // reacts to hover
@@ -276,10 +239,6 @@ for(var id in am5geodata_data_countries2) {
   }
 }
 worldSeries.data.setAll(data);
-
-
-
-
 
 
 
@@ -317,23 +276,6 @@ var backButton = backContainer.children.push(am5.Graphics.new(root, {
 }));
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- Chart code -->
-//<script>
-//am5.ready(function() {
 
 // Data: Countries, grouped by if they were visited 
 var groupData = [
@@ -415,11 +357,6 @@ var legend = chart.children.push(am5.Legend.new(root, {
 legend.valueLabels.template.set("forceHidden", true) // no value labels in the legend
 
 
-// Create series for each group
-//var colors = am5.ColorSet.new(root, {
- // step: 2 // every other palette color...
-//});
-//colors.next(); // ...skipping the first one
 
 // Зберігаємо всі кольорові серії груп країн
 var groupPolygonSeries = [];
@@ -486,7 +423,7 @@ polygonSeries.mapPolygons.template.setAll({
 
   
   
-  
+ 
   
 // Create point series for the capitals
 // https://www.amcharts.com/docs/v5/charts/map-chart/map-point-series/
@@ -535,7 +472,7 @@ pointSeries.bullets.push(function () {
 labelTemplate.set("forceHidden", true);
 
 chart.on("zoomLevel", function (zoomLevel) {
-  labelTemplate.set("forceHidden", zoomLevel < 3); // the names show from zoom level 3
+  labelTemplate.set("forceHidden", zoomLevel < 7); // the names show from zoom level 3
 });
 
 // Capitals of the world's countries
@@ -605,38 +542,11 @@ zoomControl.homeButton.events.on("click", goBack);
 }); // end am5.ready()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </script>
 
 <!-- HTML -->
 <div id="chartdiv"></div>
 
 <button onclick="window.location.href='index.html'">
-  Open test version
+  Go back
 </button>
-
-
-
-
-
-
-
-
-
-
-
