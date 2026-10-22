@@ -76,9 +76,9 @@ var waterSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
 }));
 
 waterSeries.mapPolygons.template.setAll({
-  fill: root.interfaceColors.get("alternativeBackground"), // dark on a light background, light on a dark one
-  fillOpacity: 0.99, // barely there
-  fill: am5.color(0x89CFF0),
+ // fill: root.interfaceColors.get("alternativeBackground"), // dark on a light background, light on a dark one
+  fillOpacity: 0.66, // barely there
+  fill: am5.color(0x1881C7),
   strokeOpacity: 0   // no outline
 });
 
@@ -104,52 +104,130 @@ var worldSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
   exclude: ["AQ"] // no Antarctica or ["AQ", "RU"]
 }));
 
+
+
 worldSeries.mapPolygons.template.setAll({
- // tooltipText: "{name} {joined}",     // the country's name on hover
-  tooltipText: "[bold]{name}[/]\nMember since {joined}", // the name in bold, then the year it joined
-  interactive: true,         // reacts to hover and clicks
-  fill: am5.color(0xaaaaaa), // gray, for countries without a map to drill into
-  // countries with a map of their own take their continent's color from polygonSettings in the data
+  tooltipText:
+    "[bold]{name}[/]\n{status}{year}",
+  interactive: true,
+  fill: am5.Color.interpolate(
+    0.3,
+    root.interfaceColors.get("background"),
+    root.interfaceColors.get("alternativeBackground")
+  ),
   templateField: "polygonSettings"
 });
 
-// a country turns a palette color under the pointer
 worldSeries.mapPolygons.template.states.create("hover", {
-  fill: colors.getIndex(9),
+  fill: am5.Color.brighten(
+    am5.Color.interpolate(
+      0.3,
+      root.interfaceColors.get("background"),
+      root.interfaceColors.get("alternativeBackground")
+    ),
+    -0.1
+  )
 });
+
+
+
+
+
+// a country turns a palette color under the pointer
+//worldSeries.mapPolygons.template.states.create("hover", {
+//  fill: colors.getIndex(9),
+//});
 
 
 
 
 
 // a click zooms in on the country and loads the map of its regions
-worldSeries.mapPolygons.template.events.on("click", (ev) => {
+worldSeries.mapPolygons.template.events.on("click", function(ev) {
   var dataItem = ev.target.dataItem;
-  var data = dataItem.dataContext;
-  var zoomAnimation = worldSeries.zoomToDataItem(dataItem); // zoom in to fit the clicked country
 
-  // once the zoom has ended and the country's map has loaded, swap the world for the country
-  Promise.all([
-    zoomAnimation.waitForStop(),
-    am5.net.load("https://cdn.amcharts.com/lib/5/geodata/json/" + data.map + ".json", chart)
-  ]).then((results) => {
-    var geodata = am5.JSONParser.parse(results[1].response);
-    countrySeries.setAll({
-      geoJSON: geodata,
-      fill: data.polygonSettings.fill // the regions in the country's continent color
-    });
-
-    countrySeries.show();
-    worldSeries.hide(100); // hide the world map in 0.1 seconds
-    backContainer.show();
-  });
+  if (dataItem && dataItem.dataContext) {
+    openCountry(dataItem.dataContext.id);
+  }
 });
+
+
+
+
+
+
+
+
 
 // Create polygon series for the country map
 // https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/
 var countrySeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
   visible: false // hidden until a country is clicked
 }));
+
+
+
+function openCountry(countryId, groupColor) {
+  // Знаходимо дані країни в базовій серії світу
+  var dataItem = worldSeries.dataItems.find(function(item) {
+    return item.dataContext.id === countryId;
+  });
+
+  // Якщо країна не має доступної детальної карти,
+  // нічого не завантажуємо
+  if (!dataItem || !dataItem.dataContext.map) {
+    console.warn(
+      "Для цієї країни немає доступної регіональної карти:",
+      countryId
+    );
+    return;
+  }
+
+  var data = dataItem.dataContext;
+
+  // Наближаємо карту до країни
+  var zoomAnimation = worldSeries.zoomToDataItem(dataItem);
+
+  // Завантажуємо географічні дані її регіонів
+  Promise.all([
+    zoomAnimation.waitForStop(),
+    am5.net.load(
+      "https://cdn.amcharts.com/lib/5/geodata/json/" +
+      data.map + ".json",
+      chart
+    )
+  ]).then(function(results) {
+    var geodata = am5.JSONParser.parse(results[1].response);
+
+    // Відображаємо карту регіонів
+    countrySeries.setAll({
+      geoJSON: geodata,
+      fill: groupColor || am5.color(0xaaaaaa)
+    });
+
+    countrySeries.show();
+    worldSeries.hide(100);
+    backContainer.show();
+
+  }).catch(function(error) {
+    console.error(
+      "Не вдалося завантажити детальну карту:",
+      countryId,
+      error
+    );
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
 
 countrySeries.mapPolygons.template.setAll({
 //  tooltipText: "{name}",    // the region's name on hover
@@ -238,58 +316,53 @@ var backButton = backContainer.children.push(am5.Graphics.new(root, {
 //<script>
 //am5.ready(function() {
 
-// Data: the 27 members of the European Union, grouped by when they joined
+// Data: Countries, grouped by if they were visited 
 var groupData = [
   {
-    "name": "Ukraine",
-    "color": 90,
-    "data": [
-      { "id": "UA"}
-   ]
-  }, {
-    "name": "Visited",
-     "color": "0x4BCC39",
-    "data": [
-      { "id": "LT", "joined": "2004" },
-      { "id": "LV", "joined": "2004" },
-      { "id": "CZ", "joined": "2004" },
-      { "id": "SK", "joined": "2004" },
-      { "id": "SI", "joined": "2004" },
-      { "id": "EE", "joined": "2004" },
-      { "id": "HU", "joined": "2004" },
-      { "id": "CY", "joined": "2004" },
-      { "id": "MT", "joined": "2004" },
-      { "id": "PL", "joined": "2004" },
-      { "id": "IE", "joined": "1973"},
-      { "id": "DK", "joined": "1973"},
-      { "id": "FI", "joined": "1995"},
-      { "id": "SE", "joined": "1995"},
-      { "id": "IT", "joined": "1957"},
-      { "id": "FR", "joined": "1957"},
-      { "id": "ES", "joined": "1986"},
-      { "id": "GR", "joined": "1981"},
-      { "id": "DE", "joined": "1957"},
-      { "id": "BE", "joined": "1957"},
-      { "id": "LU", "joined": "1957"},
-      { "id": "NL", "joined": "1957"},
-      { "id": "PT", "joined": "1986"}
+    name: "Ukraine",
+    status: "Home",
+    data: [
+      { id: "UA" }
     ]
-  }, {
-    "name": "Plan to visit nearest time",
-    "data": [
-      { "id": "RO", "joined": "2007" },
-      { "id": "BG", "joined": "2007" }
+  },
+  {
+    name: "Visited",
+    status: "Visited in ",
+    data: [
+      { id: "LT", year: "2004" },
+      { id: "LV", year: "2004" },
+      { id: "CZ", year: "2004" },
+      { id: "SK", year: "2004" },
+      { id: "SI", year: "2004" },
+      { id: "EE", year: "2004" },
+      { id: "PT", year: "1986" }
     ]
-  }, {
-    "name": "List to visit",
-    "data": [
-      { "id": "HR", "joined": "2013" }
+  },
+  {
+    name: "Plan to visit nearest time",
+    status: "Plan to visit in ",
+    data: [
+      { id: "RO", year: "2007" },
+      { id: "BG", year: "2007" }
+    ]
+  },
+  {
+    name: "List to visit",
+    status: "Plan to visit in ",
+    data: [
+      { id: "HR", year: "2013" }
     ]
   }
 ];
-groupData[1].name = "Visited - " + groupData[1].data.length;
-groupData[2].name = "Plan to visit nearest time - " + groupData[2].data.length;
-groupData[3].name = "List to visit - " + groupData[3].data.length;
+
+groupData[1].name =
+  "Visited - " + groupData[1].data.length;
+
+groupData[2].name =
+  "Plan to visit nearest time - " + groupData[2].data.length;
+
+groupData[3].name =
+  "List to visit - " + groupData[3].data.length;
 
 
 // the other countries in a neutral gray that suits light and dark backgrounds: a solid color 30% of the way from
@@ -328,10 +401,11 @@ legend.valueLabels.template.set("forceHidden", true) // no value labels in the l
 am5.array.each(groupData, function(group) {
   var countries = [];
   var color = colors.next();
-
   am5.array.each(group.data, function(country) {
     countries.push(country.id)
   });
+  
+  
 
   var polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
     geoJSON: am5geodata_worldLow,
@@ -340,14 +414,21 @@ am5.array.each(groupData, function(group) {
     name: group.name,
     fill: color // in the group's color
   }));
-
-  //polygonSeries.mapPolygons.template.setAll({
-  //  tooltipText: "[bold]{name}[/]\nMember since {joined}", // the name in bold, then the year it joined
-  //  interactive: true, // reacts to hover
-  //  fill: color,
-  //  strokeWidth: 1     // 1px borders
-  //});
   
+polygonSeries.mapPolygons.template.events.on("click", function(ev) {
+  var dataItem = ev.target.dataItem;
+
+  if (dataItem && dataItem.dataContext) {
+    openCountry(dataItem.dataContext.id, color);
+  }
+});
+
+
+polygonSeries.mapPolygons.template.setAll({
+  interactive: true,
+  tooltipText:
+    "[bold]{name}[/]\n{status}{year}"
+});
   
   
   
@@ -355,19 +436,17 @@ am5.array.each(groupData, function(group) {
     fill: am5.Color.brighten(color, -0.3) // a darker shade of the group's color
   });
 
-  // hovering one country highlights every country in its group
-  //polygonSeries.mapPolygons.template.events.on("pointerover", function(ev) {
-  //  ev.target.series.mapPolygons.each(function(polygon) {
-  //    polygon.states.applyAnimate("hover");
-  //  });
-  //});
-
-  polygonSeries.mapPolygons.template.events.on("pointerout", function(ev) {
-    ev.target.series.mapPolygons.each(function(polygon) {
-      polygon.states.applyAnimate("default");
-    });
-  });
-  polygonSeries.data.setAll(group.data);
+  
+  polygonSeries.data.setAll(
+  group.data.map(function(country) {
+    return {
+      ...country,
+      status: group.status
+    };
+  })
+);
+  
+  
 
   legend.data.push(polygonSeries); // one legend item per group
 });
@@ -489,6 +568,17 @@ zoomControl.homeButton.events.on("click", goBack);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <!-- HTML -->
@@ -497,6 +587,8 @@ zoomControl.homeButton.events.on("click", goBack);
 <button onclick="window.location.href='index.html'">
   Open test version
 </button>
+
+
 
 
 
