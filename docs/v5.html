@@ -2,7 +2,7 @@
 <style>
 #chartdiv {
   width: 100%;
-  height: 800px;
+  height: 600px;
   font-size: 0.875rem;
 }
 </style>
@@ -81,7 +81,7 @@ var waterSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
 waterSeries.mapPolygons.template.setAll({
   fill: root.interfaceColors.get("alternativeBackground"), // dark on a light background, light on a dark one
   fillOpacity: 0.99, // barely there
-   fill: am5.color(0x89CFF0),
+  fill: am5.color(0x89CFF0),
   strokeOpacity: 0   // no outline
 });
 
@@ -120,7 +120,6 @@ worldSeries.mapPolygons.template.setAll({
 worldSeries.mapPolygons.template.states.create("hover", {
   fill: colors.getIndex(9),
 });
-
 
 
 
@@ -233,6 +232,124 @@ var backButton = backContainer.children.push(am5.Graphics.new(root, {
 
 
 
+
+
+
+
+
+<!-- Chart code -->
+//<script>
+//am5.ready(function() {
+
+// Data: the 27 members of the European Union, grouped by when they joined
+var groupData = [
+  {
+    "name": "Ukraine",
+    "color": 90,
+    "data": [
+      { "id": "UA"}
+   ]
+  }, {
+    "name": "Visited",
+     "color": "0x4BCC39",
+    "data": [
+      { "id": "LT", "joined": "2004" },
+      { "id": "LV", "joined": "2004" },
+      { "id": "CZ", "joined": "2004" },
+      { "id": "SK", "joined": "2004" },
+      { "id": "SI", "joined": "2004" },
+      { "id": "EE", "joined": "2004" },
+      { "id": "HU", "joined": "2004" },
+      { "id": "CY", "joined": "2004" },
+      { "id": "MT", "joined": "2004" },
+      { "id": "PL", "joined": "2004" },
+      { "id": "IE", "joined": "1973"},
+      { "id": "DK", "joined": "1973"},
+      { "id": "FI", "joined": "1995"},
+      { "id": "SE", "joined": "1995"},
+      { "id": "IT", "joined": "1957"},
+      { "id": "FR", "joined": "1957"},
+      { "id": "ES", "joined": "1986"},
+      { "id": "GR", "joined": "1981"},
+      { "id": "DE", "joined": "1957"},
+      { "id": "BE", "joined": "1957"},
+      { "id": "LU", "joined": "1957"},
+      { "id": "NL", "joined": "1957"},
+      { "id": "PT", "joined": "1986"}
+    ]
+  }, {
+    "name": "Joined in 2007",
+    "data": [
+      { "id": "RO", "joined": "2007" },
+      { "id": "BG", "joined": "2007" }
+    ]
+  }, {
+    "name": "Joined in 2013",
+    "data": [
+      { "id": "HR", "joined": "2013" }
+    ]
+  }
+];
+groupData[1].name = "Visited - " + groupData[1].data.length;
+groupData[2].name = "Plan to visit nearest time - " + groupData[2].data.length;
+groupData[3].name = "List to visit - " + groupData[3].data.length;
+
+// the other countries in a neutral gray that suits light and dark backgrounds: a solid color 30% of the way from
+// the background color to the contrasting one, so a color picked for them shows as it is
+worldSeries.mapPolygons.template.setAll({
+  fill: am5.Color.interpolate(0.3, root.interfaceColors.get("background"), root.interfaceColors.get("alternativeBackground"))
+});
+
+
+
+
+// Add legend
+var legend = chart.children.push(am5.Legend.new(root, {
+  // plain square markers instead of markers that copy the look of the series
+  useDefaultMarker: true,
+  centerX: am5.p50,  // the legend's middle...
+  x: am5.p50,        // ...at the middle of the chart
+  centerY: am5.p100, // its bottom edge...
+  y: am5.p100,       // ...at the chart's bottom...
+  dy: -20,           // ...20px up from it
+  background: am5.RoundedRectangle.new(root, {
+    fill: root.interfaceColors.get("background"), // a box in the background color...
+    fillOpacity: 0.7 // ...slightly see-through
+  })
+}));
+
+legend.valueLabels.template.set("forceHidden", true) // no value labels in the legend
+
+
+// Create series for each group
+//var colors = am5.ColorSet.new(root, {
+ // step: 2 // every other palette color...
+//});
+//colors.next(); // ...skipping the first one
+
+am5.array.each(groupData, function(group) {
+  var countries = [];
+  var color = colors.next();
+
+  am5.array.each(group.data, function(country) {
+    countries.push(country.id)
+  });
+
+  var polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+    geoJSON: am5geodata_worldLow,
+    // only this group's countries, drawn over the gray world map
+    include: countries,
+    name: group.name,
+    fill: color // in the group's color
+  }));
+
+  //polygonSeries.mapPolygons.template.setAll({
+  //  tooltipText: "[bold]{name}[/]\nMember since {joined}", // the name in bold, then the year it joined
+  //  interactive: true, // reacts to hover
+  //  fill: color,
+  //  strokeWidth: 1     // 1px borders
+  //});
+  
 // Create point series for the capitals
 // https://www.amcharts.com/docs/v5/charts/map-chart/map-point-series/
 var pointSeries = chart.series.push(am5map.MapPointSeries.new(root, {}));
@@ -323,119 +440,6 @@ var credit = chart.children.push(am5.Label.new(root, {
 
 
 
-
-
-
-
-<!-- Chart code -->
-//<script>
-//am5.ready(function() {
-
-// Data: the 27 members of the European Union, grouped by when they joined
-var groupData = [
-  {
-    "name": "Ukraine",
-    "data": [
-      { "id": "UA"}
-   ]
-  }, {
-    "name": "Joined in 2004",
-    "data": [
-      { "id": "LT", "joined": "2004" },
-      { "id": "LV", "joined": "2004" },
-      { "id": "CZ", "joined": "2004" },
-      { "id": "SK", "joined": "2004" },
-      { "id": "SI", "joined": "2004" },
-      { "id": "EE", "joined": "2004" },
-      { "id": "HU", "joined": "2004" },
-      { "id": "CY", "joined": "2004" },
-      { "id": "MT", "joined": "2004" },
-      { "id": "PL", "joined": "2004" },
-      { "id": "IE", "joined": "1973"},
-      { "id": "DK", "joined": "1973"},
-      { "id": "FI", "joined": "1995"},
-      { "id": "SE", "joined": "1995"},
-      { "id": "IT", "joined": "1957"},
-      { "id": "FR", "joined": "1957"},
-      { "id": "ES", "joined": "1986"},
-      { "id": "GR", "joined": "1981"},
-      { "id": "DE", "joined": "1957"},
-      { "id": "BE", "joined": "1957"},
-      { "id": "LU", "joined": "1957"},
-      { "id": "NL", "joined": "1957"},
-      { "id": "PT", "joined": "1986"}
-    ]
-  }, {
-    "name": "Joined in 2007",
-    "data": [
-      { "id": "RO", "joined": "2007" },
-      { "id": "BG", "joined": "2007" }
-    ]
-  }, {
-    "name": "Joined in 2013",
-    "data": [
-      { "id": "HR", "joined": "2013" }
-    ]
-  }
-];
-
-
-// the other countries in a neutral gray that suits light and dark backgrounds: a solid color 30% of the way from
-// the background color to the contrasting one, so a color picked for them shows as it is
-worldSeries.mapPolygons.template.setAll({
-  fill: am5.Color.interpolate(0.3, root.interfaceColors.get("background"), root.interfaceColors.get("alternativeBackground"))
-});
-
-
-
-
-// Add legend
-var legend = chart.children.push(am5.Legend.new(root, {
-  // plain square markers instead of markers that copy the look of the series
-  useDefaultMarker: true,
-  centerX: am5.p50,  // the legend's middle...
-  x: am5.p50,        // ...at the middle of the chart
-  centerY: am5.p100, // its bottom edge...
-  y: am5.p100,       // ...at the chart's bottom...
-  dy: -20,           // ...20px up from it
-  background: am5.RoundedRectangle.new(root, {
-    fill: root.interfaceColors.get("background"), // a box in the background color...
-    fillOpacity: 0.7 // ...slightly see-through
-  })
-}));
-
-legend.valueLabels.template.set("forceHidden", true) // no value labels in the legend
-
-
-// Create series for each group
-var colors = am5.ColorSet.new(root, {
-  step: 2 // every other palette color...
-});
-colors.next(); // ...skipping the first one
-
-am5.array.each(groupData, function(group) {
-  var countries = [];
-  var color = colors.next();
-
-  am5.array.each(group.data, function(country) {
-    countries.push(country.id)
-  });
-
-  var polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
-    geoJSON: am5geodata_worldLow,
-    // only this group's countries, drawn over the gray world map
-    include: countries,
-    name: group.name,
-    fill: color // in the group's color
-  }));
-
-  //polygonSeries.mapPolygons.template.setAll({
-  //  tooltipText: "[bold]{name}[/]\nMember since {joined}", // the name in bold, then the year it joined
-  //  interactive: true, // reacts to hover
-  //  fill: color,
-  //  strokeWidth: 1     // 1px borders
-  //});
-
   polygonSeries.mapPolygons.template.states.create("hover", {
     fill: am5.Color.brighten(color, -0.3) // a darker shade of the group's color
   });
@@ -471,6 +475,25 @@ backContainer.events.on("click", goBack);
 // the zoom control's home button goes back to the world map too
 zoomControl.homeButton.events.on("click", goBack);
 }); // end am5.ready()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <!-- HTML -->
