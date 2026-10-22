@@ -45,25 +45,22 @@ root.setThemes([
 
 
 // Create the map chart
+// Center map to Europe on the map initiation
 // https://www.amcharts.com/docs/v5/charts/map-chart/
-var chart = root.container.children.push(am5map.MapChart.new(root, {
+var chart = root.container.children.push(
+  am5map.MapChart.new(root, {
   minZoomLevel: 0.5,                 // zoom out to half the fitted size at most
   // go to the home view once the map is fitted
- // autoHome: true,
+  autoHome: true,
+  homeZoomLevel: 4.5,
+  homeGeoPoint: { longitude: 20, latitude: 50 },
   panX: "rotateX",                   // dragging sideways turns the world, so the map wraps around
   panY: "rotateY", 
   projection: am5map.geoMercator() // a world map that keeps the countries' areas true to size
 }));
 
 
-// Center map to Europe on the map initiation
-var chart = root.container.children.push(
-  am5map.MapChart.new(root, {
-    homeZoomLevel: 4.5,
-    homeGeoPoint: { longitude: 20, latitude: 50 },
-    autoHome: true
-  })
-);
+
 // Zoom control
 // https://www.amcharts.com/docs/v5/charts/map-chart/map-pan-zoom/#Zoom_control
 var zoomControl = chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
@@ -278,13 +275,13 @@ var groupData = [
       { "id": "PT", "joined": "1986"}
     ]
   }, {
-    "name": "Joined in 2007",
+    "name": "Plan to visit nearest time",
     "data": [
       { "id": "RO", "joined": "2007" },
       { "id": "BG", "joined": "2007" }
     ]
   }, {
-    "name": "Joined in 2013",
+    "name": "List to visit",
     "data": [
       { "id": "HR", "joined": "2013" }
     ]
@@ -293,6 +290,7 @@ var groupData = [
 groupData[1].name = "Visited - " + groupData[1].data.length;
 groupData[2].name = "Plan to visit nearest time - " + groupData[2].data.length;
 groupData[3].name = "List to visit - " + groupData[3].data.length;
+
 
 // the other countries in a neutral gray that suits light and dark backgrounds: a solid color 30% of the way from
 // the background color to the contrasting one, so a color picked for them shows as it is
