@@ -1,0 +1,9 @@
+
+Create a separate file with Country data from the arrays: Country code, status, year.
+
+Create a separate file with the visited cities with the data: City name, Country, latitude, longitude.
+
+Create a summary under the map as a (collapsible) table with the following data: Country, year visited, city visited in the country.
+Add sorting to the table by: Country, Year
+Add an option for visits across multiple years.
+
