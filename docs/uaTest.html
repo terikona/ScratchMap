@@ -140,7 +140,11 @@ fetch("UA/regiony.geojson")
     return response.json();
   })
   .then(function(geoJSON) {
-    ukraineSeries.set("geoJSON", geoJSON);
+    console.log("Кількість об'єктів:", geoJSON.features?.length);
+
+ukraineSeries.set("geoJSON", geoJSON);
+
+chart.goHome();
   })
   .catch(function(error) {
     console.error("Помилка завантаження карти:", error);
