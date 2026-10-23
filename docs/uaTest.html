@@ -1,8 +1,8 @@
 <!-- Styles -->
 <style>
 #chartdiv {
-  width: 100%;
-  height: 500px;
+  width: 800px;
+  height: 800px;
   font-size: 0.875rem;
 }
 </style>
@@ -15,11 +15,9 @@
 <script src="https://cdn.amcharts.com/lib/5/themes/Adaptive.js"></script>
 
 
-
 <!-- Chart code -->
 <script>
 am5.ready(function() {
-
 
 
 // Create root element
@@ -28,18 +26,17 @@ var root = am5.Root.new("chartdiv");
 
 // Set themes
 // https://www.amcharts.com/docs/v5/concepts/themes/
+/*
 root.setThemes([
   am5themes_Animated.new(root),
   am5themes_Adaptive.new(root, { baseColor: 0x4150a0, baseColor2: 0xf0825a, count: 10, mapShade: true, keepContrast: true }),
   am5themes_Responsive.new(root)
-]);
-
+]);*/
 
 
 
 // Hover colors come from the theme's palette
-var colors = am5.ColorSet.new(root, {});
-
+//var colors = am5.ColorSet.new(root, {});
 
 
 // Create the map chart
@@ -48,6 +45,8 @@ var chart = root.container.children.push(am5map.MapChart.new(root, {
   minZoomLevel: 0.5,                 // zoom out to half the fitted size at most
   // go to the home view once the map is fitted
   autoHome: true,
+  homeZoomLevel: 9.5,
+  homeGeoPoint: { longitude: 30, latitude: 50 },
   panX: "translateX",                // dragging moves the map sideways (Albers USA can't rotate)
   panY: "translateY",                // ...and up and down
  // projection: am5map.geoAlbersUsa(), // a US projection, with Alaska and Hawaii in insets at the lower left
@@ -63,8 +62,8 @@ var zoomControl = chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
 zoomControl.homeButton.set("visible", true);
 
 
-
 // Перемикач рівнів карти — праворуч угорі
+
 var levelButtons = chart.children.push(am5.Container.new(root, {
   x: am5.p100,
   centerX: am5.p100,
@@ -120,7 +119,7 @@ function createLevelButton(level, label) {
     switchMapLevel(level);
   });
 
-  return button;
+ // return button;
 }
 
 createLevelButton("regiony", "Області");
@@ -139,38 +138,78 @@ fetch("UA/regiony.geojson")
     }
     return response.json();
   })
-
   
 .then(function(geoJSON) {
-  console.log("Кількість об'єктів:", geoJSON.features?.length);
+  console.log("Кількість об'єктів:", geoJSON.features.length);
 
-  console.log(
-    "Типи геометрій:",
-    geoJSON.features.map(function(feature) {
-      return feature.geometry?.type;
-    })
-  );
+  // Тимчасова діагностика геометрії кожної області
+  var diagnostics = geoJSON.features.map(function(feature) {
+    var coordinates = [];
+    var geometry = feature.geometry;
 
-  console.log(
-    "Назви об'єктів:",
-    geoJSON.features.map(function(feature) {
-      return feature.properties?.name
-        || feature.properties?.NAME_1
-        || feature.properties?.NAME
-        || "(назву не знайдено)";
-    })
-  );
+    function collectCoordinates(item) {
+      if (!Array.isArray(item)) return;
 
-ukraineSeries.set("geoJSON", geoJSON);
-ukraineSeries.set("geoJSON", geoJSON);
+      // Знайшли пару координат [longitude, latitude]
+      if (
+        item.length >= 2 &&
+        typeof item[0] === "number" &&
+        typeof item[1] === "number"
+      ) {
+        coordinates.push([item[0], item[1]]);
+        return;
+      }
 
-ukraineSeries.events.once("datavalidated", function() {
-  chart.goHome();
-});
+      item.forEach(collectCoordinates);
+    }
+
+    if (geometry && geometry.coordinates) {
+      collectCoordinates(geometry.coordinates);
+    }
+
+    var longitudes = coordinates.map(function(point) {
+      return point[0];
+    });
+
+    var latitudes = coordinates.map(function(point) {
+      return point[1];
+    });
+
+    var validCoordinates = coordinates.every(function(point) {
+      return Number.isFinite(point[0]) &&
+             Number.isFinite(point[1]) &&
+             point[0] >= -180 && point[0] <= 180 &&
+             point[1] >= -90 && point[1] <= 90;
+    });
+
+    return {
+      region: feature.properties?.region ?? "Назва відсутня",
+      geometryType: geometry?.type ?? "Відсутня",
+      points: coordinates.length,
+      minLon: longitudes.length ? Math.min(...longitudes) : null,
+      maxLon: longitudes.length ? Math.max(...longitudes) : null,
+      minLat: latitudes.length ? Math.min(...latitudes) : null,
+      maxLat: latitudes.length ? Math.max(...latitudes) : null,
+      validCoordinates: validCoordinates
+    };
+  });
+
+  console.table(diagnostics);
+
+
+
+  // Основний код завантаження карти 
+  ukraineSeries.set("geoJSON", geoJSON);
+
+
+    ukraineSeries.events.once("datavalidated", function() {
+      chart.goHome();
+    });
   })
   .catch(function(error) {
     console.error("Помилка завантаження карти:", error);
   });
+  
 
 function switchMapLevel(level) {
   if (!mapSeries[level]) return;
@@ -201,14 +240,19 @@ function switchMapLevel(level) {
 ukraineSeries.mapPolygons.template.setAll({
   tooltipText: "{region}",
   interactive: true,
-  templateField: "polygonSettings"
+ // templateField: "polygonSettings",
+  fill: am5.color(0xff0000),
+  fillOpacity: 0.8,
+  stroke: am5.color(0x000000),
+  strokeOpacity: 1,
+  strokeWidth: 1
 });
 
 // a state turns a palette color under the pointer
+
 ukraineSeries.mapPolygons.template.states.create("hover", {
   fill: colors.getIndex(9)
 });
-
 
 
 // the title sits in the room above the map ("absolute" places it from the chart's top edge, not inside the padding)
@@ -221,8 +265,11 @@ var title = chart.children.push(am5.Label.new(root, {
   fontSize: 20,     // 20px text
   textAlign: "center"
 }));
-}); // end am5.ready()
+
+}); // кінець am5.ready()
 </script>
 
 <!-- HTML -->
 <div id="chartdiv"></div>
+
+
