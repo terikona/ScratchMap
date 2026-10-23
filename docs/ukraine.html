@@ -1,1 +1,177 @@
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+  font-size: 0.875rem;
+}
+</style>
+
+<!-- Resources -->
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Responsive.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/geodata/ukraineLow.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Adaptive.js"></script>
+
+<!-- Chart code -->
+<script>
+am5.ready(function() {
+
+// Create root element
+// https://www.amcharts.com/docs/v5/getting-started/#Root_element
+var root = am5.Root.new("chartdiv");
+
+// Set themes
+// https://www.amcharts.com/docs/v5/concepts/themes/
+root.setThemes([
+  am5themes_Animated.new(root),
+  am5themes_Adaptive.new(root, { baseColor: 0x4150a0, baseColor2: 0xf0825a, count: 10, mapShade: true, keepContrast: true }),
+  am5themes_Responsive.new(root)
+]);
+
+// Hover colors come from the theme's palette
+var colors = am5.ColorSet.new(root, {});
+
+// Create the map chart
+// https://www.amcharts.com/docs/v5/charts/map-chart/
+var chart = root.container.children.push(am5map.MapChart.new(root, {
+  minZoomLevel: 0.5,                 // zoom out to half the fitted size at most
+  // go to the home view once the map is fitted
+  autoHome: true,
+  panX: "translateX",                // dragging moves the map sideways (Albers USA can't rotate)
+  panY: "translateY",                // ...and up and down
+ // projection: am5map.geoAlbersUsa(), // a US projection, with Alaska and Hawaii in insets at the lower left
+  // room for the title above the map
+ // paddingTop: 40
+}));
+
+// Zoom control
+// https://www.amcharts.com/docs/v5/charts/map-chart/map-pan-zoom/#Zoom_control
+var zoomControl = chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
+
+// the home button is hidden by default
+zoomControl.homeButton.set("visible", true);
+
+// Create polygon series for the states
+// https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/
+var ukraineSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+  geoJSON: am5geodata_ukraineLow
+}));
+
+ukraineSeries.mapPolygons.template.setAll({
+  tooltipText: "{name}",           // the state's name on hover
+  interactive: true,               // reacts to hover and clicks
+  templateField: "polygonSettings" // styles from a polygonSettings field in the data, if a state has one
+});
+
+// a state turns a palette color under the pointer
+ukraineSeries.mapPolygons.template.states.create("hover", {
+  fill: colors.getIndex(9)
+});
+
+// a click zooms in on the state and loads its congressional districts
+ukraineSeries.mapPolygons.template.events.on("click", (ev) => {
+  var dataItem = ev.target.dataItem;
+  // "US-CA" becomes "ca", the state's part of the district map's file name
+  var id = dataItem.get("id").toLowerCase().split("-").pop();
+  var name = dataItem.dataContext.name;
+  var zoomAnimation = ukraineSeries.zoomToDataItem(dataItem); // zoom in to fit the clicked state
+
+  // once the zoom has ended and the districts have loaded, swap the states for the districts
+  Promise.all([
+    zoomAnimation.waitForStop(),
+    am5.net.load("https://cdn.amcharts.com/lib/5/geodata/json/region/usa/congressional120/" + id + "Low.json", chart)
+  ]).then(function(results) {
+    var geodata = am5.JSONParser.parse(results[1].response);
+    stateSeries.setAll({
+      geoJSON: geodata
+    });
+
+    stateSeries.show();
+    ukraineSeries.hide(100); // hide the states in 0.1 seconds
+    backContainer.show();
+    title.set("text", name);
+  });
+});
+
+// Create polygon series for the districts of the clicked state
+// https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/
+var stateSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+  visible: false // hidden until a state is clicked
+}));
+
+stateSeries.mapPolygons.template.setAll({
+  tooltipText: "{name}", // the district's name on hover
+  interactive: true      // reacts to hover
+});
+
+stateSeries.mapPolygons.template.states.create("hover", {
+  fill: colors.getIndex(9)
+});
+
+// Add button to go back to the whole country
+var backContainer = chart.children.push(am5.Container.new(root, {
+  x: am5.p100,                   // at the chart's right edge...
+  centerX: am5.p100,             // ...aligned by its own right edge
+  dx: -10,                       // 10px in from the edge
+  paddingTop: 5,                 // space around the label and the arrow
+  paddingRight: 10,
+  paddingBottom: 5,
+  y: 30,                         // a little below the top
+  // the whole box takes the click, not the label and icon inside it
+  interactiveChildren: false,
+  layout: root.horizontalLayout, // the label and the arrow side by side
+  cursorOverStyle: "pointer",    // a hand pointer over the button
+  background: am5.RoundedRectangle.new(root, {
+    fill: root.interfaceColors.get("background"), // a box in the chart's background color...
+    fillOpacity: 0.7 // ...slightly see-through
+  }),
+  visible: false // hidden until a state is clicked
+}));
+
+var backLabel = backContainer.children.push(am5.Label.new(root, {
+  text: "Back",
+  centerY: am5.p50 // the label and the arrow line up on their middles
+}));
+
+var backButton = backContainer.children.push(am5.Graphics.new(root, {
+  width: 32, // a 32px icon
+  height: 32,
+  centerY: am5.p50,
+  fill: root.interfaceColors.get("text"), // in the text color, so it shows on light and dark backgrounds
+  // a back arrow, as SVG path data
+  svgPath: "M12 9.059V6.5a1.001 1.001 0 0 0-1.707-.708L4 12l6.293 6.207a.997.997 0 0 0 1.414 0A.999.999 0 0 0 12 17.5v-2.489c2.75.068 5.755.566 8 3.989v-1c0-4.633-3.5-8.443-8-8.941z"
+}));
+
+// back to the whole country: zoom out and swap the districts for the states
+function goBack() {
+  chart.goHome();
+  ukraineSeries.show();
+  stateSeries.hide();
+  backContainer.hide();
+  title.set("text", "Україна");
+}
+
+backContainer.events.on("click", goBack);
+
+// the zoom control's home button goes back to the whole country too
+zoomControl.homeButton.events.on("click", goBack);
+
+// the title sits in the room above the map ("absolute" places it from the chart's top edge, not inside the padding)
+var title = chart.children.push(am5.Label.new(root, {
+  text: "Україна",
+  position: "absolute",
+  x: am5.p50,       // centered across the chart...
+  centerX: am5.p50, // ...by its own middle
+  y: 5,             // 5px from the top
+  fontSize: 20,     // 20px text
+  textAlign: "center"
+}));
+}); // end am5.ready()
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>
 
