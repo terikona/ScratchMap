@@ -139,8 +139,22 @@ fetch("UA/regiony.geojson")
     }
     return response.json();
   })
-  .then(function(geoJSON) {
-    console.log("Кількість об'єктів:", geoJSON.features?.length);
+  console.log(
+    "Типи геометрій:",
+    geoJSON.features.map(function(feature) {
+      return feature.geometry?.type;
+    })
+  );
+
+  console.log(
+    "Назви об'єктів:",
+    geoJSON.features.map(function(feature) {
+      return feature.properties?.name
+        || feature.properties?.NAME_1
+        || feature.properties?.NAME
+        || "(назву не знайдено)";
+    })
+  );
 
 ukraineSeries.set("geoJSON", geoJSON);
 
