@@ -162,8 +162,11 @@ fetch("UA/regiony.geojson")
   );
 
 ukraineSeries.set("geoJSON", geoJSON);
+ukraineSeries.set("geoJSON", geoJSON);
 
-chart.goHome();
+ukraineSeries.events.once("datavalidated", function() {
+  chart.goHome();
+});
   })
   .catch(function(error) {
     console.error("Помилка завантаження карти:", error);
@@ -196,9 +199,9 @@ function switchMapLevel(level) {
 }
 
 ukraineSeries.mapPolygons.template.setAll({
-  tooltipText: "{name}",           // the state's name on hover
-  interactive: true,               // reacts to hover and clicks
-  templateField: "polygonSettings" // styles from a polygonSettings field in the data, if a state has one
+  tooltipText: "{region}",
+  interactive: true,
+  templateField: "polygonSettings"
 });
 
 // a state turns a palette color under the pointer
