@@ -16,6 +16,7 @@ Add visited cities
 Add a repository under UA folder with data for polygons. Contains data to обласні райони
 Example of repository https://github.com/amcharts/amcharts5/blob/master/src/geodata/region/usa/nyLow.ts
 Example of the map building https://www.amcharts.com/demos/drill-down-congressional-map/
+Карта Києва без районів https://github.com/oleksmaistrenko/kyiv-derussification/blob/main/kyiv.geojson
 
    +     Повернути на мапу відображення назв регіонів
    +     Зробити тултіпи напівпрозорими
