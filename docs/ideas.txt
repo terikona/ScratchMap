@@ -1,9 +1,20 @@
 
-Create a separate file with Country data from the arrays: Country code, status, year.
+->Create a separate file with Country data from the arrays: Country code, status, year.
 
-Create a separate file with the visited cities with the data: City name, Country, latitude, longitude.
+->Create a separate file with the visited cities with the data: City name, Country, latitude, longitude.
 
-Create a summary under the map as a (collapsible) table with the following data: Country, year visited, city visited in the country.
+->Create a summary under the map as a (collapsible) table with the following data: Country, year visited, city visited in the country.
 Add sorting to the table by: Country, Year
 Add an option for visits across multiple years.
 
+->При натисканні на росію не переходити на мапу. 
+Тултіп змінити на "Error 404\nCountry not found"
+
+->Create page for ukraine.html
+Use detailed map
+Add visited cities
+
+   +     Повернути на мапу відображення назв регіонів
+   +     Зробити тултіпи напівпрозорими
+   +     Прибрати параграф у сірих країн
+   +     Змінити фіолетову категорію на Home
