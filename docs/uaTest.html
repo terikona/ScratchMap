@@ -139,6 +139,11 @@ fetch("UA/regiony.geojson")
     }
     return response.json();
   })
+
+  
+.then(function(geoJSON) {
+  console.log("Кількість об'єктів:", geoJSON.features?.length);
+
   console.log(
     "Типи геометрій:",
     geoJSON.features.map(function(feature) {
