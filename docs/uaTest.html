@@ -1,0 +1,202 @@
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+  font-size: 0.875rem;
+}
+</style>
+
+<!-- Resources -->
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Responsive.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Adaptive.js"></script>
+
+
+
+<!-- Chart code -->
+<script>
+am5.ready(function() {
+
+
+
+// Create root element
+// https://www.amcharts.com/docs/v5/getting-started/#Root_element
+var root = am5.Root.new("chartdiv");
+
+// Set themes
+// https://www.amcharts.com/docs/v5/concepts/themes/
+root.setThemes([
+  am5themes_Animated.new(root),
+  am5themes_Adaptive.new(root, { baseColor: 0x4150a0, baseColor2: 0xf0825a, count: 10, mapShade: true, keepContrast: true }),
+  am5themes_Responsive.new(root)
+]);
+
+
+
+
+// Hover colors come from the theme's palette
+var colors = am5.ColorSet.new(root, {});
+
+
+
+// Create the map chart
+// https://www.amcharts.com/docs/v5/charts/map-chart/
+var chart = root.container.children.push(am5map.MapChart.new(root, {
+  minZoomLevel: 0.5,                 // zoom out to half the fitted size at most
+  // go to the home view once the map is fitted
+  autoHome: true,
+  panX: "translateX",                // dragging moves the map sideways (Albers USA can't rotate)
+  panY: "translateY",                // ...and up and down
+ // projection: am5map.geoAlbersUsa(), // a US projection, with Alaska and Hawaii in insets at the lower left
+  // room for the title above the map
+ // paddingTop: 40
+}));
+
+// Zoom control
+// https://www.amcharts.com/docs/v5/charts/map-chart/map-pan-zoom/#Zoom_control
+var zoomControl = chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
+
+// the home button is hidden by default
+zoomControl.homeButton.set("visible", true);
+
+
+
+// Перемикач рівнів карти — праворуч угорі
+var levelButtons = chart.children.push(am5.Container.new(root, {
+  x: am5.p100,
+  centerX: am5.p100,
+  y: 20,
+  dx: -10,
+  layout: root.verticalLayout,
+  paddingTop: 0,
+  paddingBottom: 0,
+  paddingLeft: 0,
+  paddingRight: 0
+}));
+
+var levelButtonItems = {};
+
+function createLevelButton(level, label) {
+  var button = levelButtons.children.push(
+    am5.Container.new(root, {
+      width: 125,
+      layout: root.horizontalLayout,
+      paddingTop: 9,
+      paddingBottom: 9,
+      paddingLeft: 12,
+      paddingRight: 12,
+      marginBottom: 6,
+      cursorOverStyle: "pointer",
+      background: am5.RoundedRectangle.new(root, {
+        fill: root.interfaceColors.get("alternativeBackground"),
+        fillOpacity: 0.08,
+        stroke: root.interfaceColors.get("alternativeBackground"),
+        strokeOpacity: 0.3,
+        cornerRadiusTL: 5,
+        cornerRadiusTR: 5,
+        cornerRadiusBL: 5,
+        cornerRadiusBR: 5
+      })
+    })
+  );
+
+  var text = button.children.push(am5.Label.new(root, {
+    text: label,
+    width: am5.p100,
+    textAlign: "center",
+    fontSize: 14,
+    fill: root.interfaceColors.get("text")
+  }));
+
+  levelButtonItems[level] = {
+    container: button,
+    label: text
+  };
+
+  button.events.on("click", function () {
+    switchMapLevel(level);
+  });
+
+  return button;
+}
+
+createLevelButton("regiony", "Області");
+createLevelButton("rayony", "Райони");
+createLevelButton("hromady", "Громади");
+// Create polygon series for the states
+// https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/
+var ukraineSeries = chart.series.push(
+  am5map.MapPolygonSeries.new(root, {})
+);
+
+fetch("UA/regiony.geojson")
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("Не вдалося завантажити regiony.geojson");
+    }
+    return response.json();
+  })
+  .then(function(geoJSON) {
+    ukraineSeries.set("geoJSON", geoJSON);
+  })
+  .catch(function(error) {
+    console.error("Помилка завантаження карти:", error);
+  });
+
+function switchMapLevel(level) {
+  if (!mapSeries[level]) return;
+
+  Object.entries(mapSeries).forEach(([name, series]) => {
+    if (name === level) {
+      series.show();
+    } else {
+      series.hide();
+    }
+  });
+
+  Object.entries(levelButtonItems).forEach(([name, item]) => {
+    var active = name === level;
+
+    item.container.get("background").setAll({
+      fill: root.interfaceColors.get("alternativeBackground"),
+      fillOpacity: active ? 0.25 : 0.08,
+      strokeOpacity: active ? 0.8 : 0.3
+    });
+
+    item.label.set("fontWeight", active ? "600" : "400");
+  });
+
+  activeLevel = level;
+}
+
+ukraineSeries.mapPolygons.template.setAll({
+  tooltipText: "{name}",           // the state's name on hover
+  interactive: true,               // reacts to hover and clicks
+  templateField: "polygonSettings" // styles from a polygonSettings field in the data, if a state has one
+});
+
+// a state turns a palette color under the pointer
+ukraineSeries.mapPolygons.template.states.create("hover", {
+  fill: colors.getIndex(9)
+});
+
+
+
+// the title sits in the room above the map ("absolute" places it from the chart's top edge, not inside the padding)
+var title = chart.children.push(am5.Label.new(root, {
+  text: "Україна",
+  position: "absolute",
+  x: am5.p50,       // centered across the chart...
+  centerX: am5.p50, // ...by its own middle
+  y: 5,             // 5px from the top
+  fontSize: 20,     // 20px text
+  textAlign: "center"
+}));
+}); // end am5.ready()
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>
