@@ -131,6 +131,17 @@ worldSeries.mapPolygons.template.events.on("click", function(ev) {
 });
 
 
+//Changes the desing of the grey countries tooltip
+var tooltip = am5.Tooltip.new(root, {
+  getFillFromSprite: true // get the colour from the poligon
+//  labelText: "[bold]{name}" 
+});
+
+tooltip.get("background").setAll({
+  fillOpacity: 0.3 // makes transperent
+});
+
+worldSeries.set("tooltip", tooltip);
 
 // Create polygon series for the country map
 // https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/
@@ -149,9 +160,7 @@ function openCountry(countryId, groupColor) {
   // Якщо країна не має доступної детальної карти,
   // нічого не завантажуємо
   if (!dataItem || !dataItem.dataContext.map) {
-    console.warn(
-      "Detailed map for this country is not available",
-      countryId
+    console.warn("Detailed map for this country is not available", countryId
     );
     return;
   }
@@ -209,10 +218,27 @@ regionHoverState.set(
 
 
 countrySeries.mapPolygons.template.setAll({
-//  tooltipText: "{name}",    // the region's name on hover
+  tooltipText: "{name}",    // the region's name on hover
   interactive: true,        // reacts to hover
   fill: am5.color(0xaaaaaa) // gray until a click sets the continent's color
 });
+
+
+
+// Tooltip with a semi-transparent background for a regional maps
+var regionTooltip = am5.Tooltip.new(root, {
+  getFillFromSprite: true
+ //, labelText: "{name}"
+});
+
+regionTooltip.get("background").setAll({
+  fillOpacity: 0.3 //transparent setup
+});
+
+countrySeries.set("tooltip", regionTooltip);
+
+
+
 
 var regionHoverState =
   countrySeries.mapPolygons.template.states.create("hover", {
@@ -399,6 +425,19 @@ polygonSeries.mapPolygons.template.setAll({
 });
   
   
+  
+// Tooltip with a semi-transparent background for grouped countries
+var groupTooltip = am5.Tooltip.new(root, {
+  getFillFromSprite: true
+//,  labelText: "[bold]{name}[/]\n{status}{year}"
+});
+
+groupTooltip.get("background").setAll({
+  fillOpacity: 0.3
+});
+
+polygonSeries.set("tooltip", groupTooltip);
+
   
    polygonSeries.mapPolygons.template.states.create("hover", {
     fill: am5.Color.brighten(color, -0.3) // a darker shade of the group's color
