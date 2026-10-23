@@ -220,7 +220,7 @@ regionHoverState.set(
 countrySeries.mapPolygons.template.setAll({
   tooltipText: "{name}",    // the region's name on hover
   interactive: true,        // reacts to hover
-  fill: am5.color(0xaaaaaa) // gray until a click sets the continent's color
+  fill: am5.color(0x525252) // gray until a click sets the continent's color
 });
 
 
@@ -315,32 +315,74 @@ var groupData = [
     name: "Visited",
     status: "Visited in ",
       color: "#93CF69",
-    data: [
-      { id: "LT", year: "2004" },
-      { id: "LV", year: "2004" },
-      { id: "CZ", year: "2004" },
-      { id: "SK", year: "2004" },
-      { id: "SI", year: "2004" },
-      { id: "EE", year: "2004" },
-      { id: "PT", year: "1986" }
-    ]
+   data: [
+  { id: "AT", year: "2013" },
+  { id: "BE", year: "2019" },
+  { id: "CY", year: "2022" },
+  { id: "CZ", year: "2013, 2020" },
+  { id: "DK", year: "2025" },
+  { id: "DE", year: "2013" },
+  { id: "ES", year: "2026" },
+  { id: "HU", year: "2013" },
+  { id: "IS", year: "2022" },
+  { id: "PL", year: "2013, 2016, 2019" },
+  { id: "PT", year: "2026" },
+  { id: "KG", year: "2003" },
+  { id: "RO", year: "Jan 2023" },
+  { id: "RU", year: "many times" },
+  { id: "SK", year: "2020" }
+]
   },
   {
     name: "Plan to visit nearest time",
-    status: "Plan to visit in ",
+    status: "Plan to visit ",
       color: "#69C7CF",
     data: [
-      { id: "RO", year: "2007" },
-      { id: "BG", year: "2007" }
-    ]
+  { id: "AL", year: "first" },
+  { id: "BA", year: "first" },
+  { id: "HR", year: "first" },
+  { id: "EE", year: "first" },
+  { id: "XK", year: "first" },
+  { id: "LV", year: "first" },
+  { id: "LT", year: "first" },
+  { id: "MK", year: "first" },
+  { id: "ME", year: "first" },
+  { id: "RS", year: "first" },
+  { id: "SI", year: "first" }
+]
   },
   {
     name: "List to visit",
-    status: "Plan to visit in ",
+    status: "Want to visit ",
       color: "#CF7169",
-    data: [
-      { id: "HR", year: "2013" }
-    ]
+  data: [
+  { id: "AD", year: "" },
+  { id: "BY", year: "" },
+  { id: "BG", year: "" },
+  { id: "FO", year: "" },
+  { id: "FI", year: "in summer" },
+  { id: "FR", year: "" },
+  { id: "GE", year: "" },
+  { id: "GB", year: "" },
+  { id: "GR", year: "in Oct - Nov" },
+  { id: "IE", year: "in summer" },
+  { id: "IL", year: "" },
+  { id: "IT", year: "in winter" },
+  { id: "JP", year: "during もみじまつり" },
+  { id: "KZ", year: "" },
+  { id: "LI", year: "" },
+  { id: "LU", year: "" },
+  { id: "MT", year: "" },
+  { id: "MD", year: "" },
+  { id: "MC", year: "" },
+  { id: "NL", year: "" },
+  { id: "NO", year: "in summer" },
+  { id: "SM", year: "" },
+  { id: "SE", year: "in summer" },
+  { id: "CH", year: "" },
+  { id: "TR", year: "" },
+  { id: "VA", year: "" }
+]
   }
 ];
 
