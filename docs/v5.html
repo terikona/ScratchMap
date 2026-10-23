@@ -45,8 +45,7 @@ var chart = root.container.children.push(
   autoHome: true,
   homeZoomLevel: 4.5,
   homeGeoPoint: { longitude: 20, latitude: 50 },
-  panX: "rotateX",                   // dragging sideways turns the world, so the map wraps around
-  //panY: "rotateY", 
+  panX: "rotateX",                   // dragging sideways turns the world, so the map wraps around 
   projection: am5map.geoMercator() // a world map that keeps the countries' areas true to size
 }));
 
@@ -212,8 +211,9 @@ regionHoverState.set(
 
 
 countrySeries.mapPolygons.template.setAll({
-//  tooltipText: "{name}",    // the region's name on hover
+  tooltipText: "{name}",    // the region's name on hover
   interactive: true,        // reacts to hover
+  fillOpacity: 0.66,
   fill: am5.color(0xaaaaaa) // gray until a click sets the continent's color
 });
 
