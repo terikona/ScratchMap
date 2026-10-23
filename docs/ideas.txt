@@ -13,6 +13,9 @@ Add an option for visits across multiple years.
 ->Create page for ukraine.html
 Use detailed map
 Add visited cities
+Add a repository under UA folder with data for polygons. Contains data to обласні райони
+Example of repository https://github.com/amcharts/amcharts5/blob/master/src/geodata/region/usa/nyLow.ts
+Example of the map building https://www.amcharts.com/demos/drill-down-congressional-map/
 
    +     Повернути на мапу відображення назв регіонів
    +     Зробити тултіпи напівпрозорими
