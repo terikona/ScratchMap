@@ -557,40 +557,61 @@ chart.on("zoomLevel", function (zoomLevel) {
 // Capitals of the world's countries
 // (Natural Earth populated places, public domain)
 var capitals = [
-  { title: "Vienna", country: "Austria", latitude: 48.2083 , longitude: 16.3725  },
-  { title: "Brussels", country: "Belgium", latitude: 50.84, longitude: 4.33 },
-  { title: "Nicosia", country: "Cyprus", latitude: 35.17, longitude: 33.37 },
-  { title: "Prague", country: "Czechia", latitude: 50.09, longitude: 14.46 },
-  { title: "Copenhagen", country: "Denmark", latitude: 55.68, longitude: 12.56 },
-  { title: "Paris", country: "France", latitude: 48.87, longitude: 2.33 },
-  { title: "Berlin", country: "Germany", latitude: 52.52, longitude: 13.4 },
-  { title: "Budapest", country: "Hungary", latitude: 47.5, longitude: 19.08 },
-  { title: "Reykjavík", country: "Iceland", latitude: 64.15, longitude: -21.95 },
-  { title: "Tokyo", country: "Japan", latitude: 35.69, longitude: 139.75 },
-  { title: "Bishkek", country: "Kyrgyzstan", latitude: 42.88, longitude: 74.58 },
-  { title: "Warsaw", country: "Poland", latitude: 52.25, longitude: 21.0 },
-  { title: "Lisbon", country: "Portugal", latitude: 38.72, longitude: -9.15 },
-  { title: "Bucharest", country: "Romania", latitude: 44.44, longitude: 26.1 },
-  { title: "Moscow", country: "Russia", latitude: 55.75, longitude: 37.61 },
-  { title: "Bratislava", country: "Slovakia", latitude: 48.15, longitude: 17.12 },
-  { title: "Madrid", country: "Spain", latitude: 40.4, longitude: -3.69 },
-  { title: "Kyiv", country: "Ukraine", latitude: 50.45 , longitude: 30.523333  }
+  { title: "Lisbon", country: "Portugal", latitude: 38.7223, longitude: -9.1393 },
+  { title: "Cadiz", country: "Spain", latitude: 36.5271, longitude: -6.2886 },
+  { title: "Seville", country: "Spain", latitude: 37.3891, longitude: -5.9845 },
+  { title: "Reykjavik", country: "Iceland", latitude: 64.1466, longitude: -21.9426 },
+  { title: "Antwerp", country: "Belgium", latitude: 51.2194, longitude: 4.4025 },
+  { title: "Copenhagen", country: "Denmark", latitude: 55.6761, longitude: 12.5683 },
+  { title: "Dresden", country: "Germany", latitude: 51.0504, longitude: 13.7373 },
+  { title: "Vienna", country: "Austria", latitude: 48.2083, longitude: 16.3725 },
+  { title: "Prague", country: "Czech Republic", latitude: 50.0755, longitude: 14.4378 },
+  { title: "Cesky Krumlov", country: "Czech Republic", latitude: 48.8127, longitude: 14.3175 },
+  { title: "Kutna Hora", country: "Czech Republic", latitude: 49.9539, longitude: 15.2682 },
+  { title: "Bratislava", country: "Slovakia", latitude: 48.1486, longitude: 17.1077 },
+  { title: "Limassol", country: "Cyprus", latitude: 34.7071, longitude: 33.0226 },
+  { title: "Paphos", country: "Cyprus", latitude: 34.7754, longitude: 32.4218 },
+  { title: "Bishkek", country: "Kyrgyzstan", latitude: 42.8746, longitude: 74.5698 },
+  { title: "Budapest", country: "Hungary", latitude: 47.4979, longitude: 19.0402 },
+  { title: "Bucharest", country: "Romania", latitude: 44.4268, longitude: 26.1025 },
+  { title: "Warsaw", country: "Poland", latitude: 52.2297, longitude: 21.0122 },
+  { title: "Krakow", country: "Poland", latitude: 50.0647, longitude: 19.9450 },
+  { title: "Chelm", country: "Poland", latitude: 51.1431, longitude: 23.4712 },
+  { title: "Kyiv", country: "Ukraine", latitude: 50.4501, longitude: 30.5234 },
+  { title: "Chernihiv", country: "Ukraine", latitude: 51.4982, longitude: 31.2893 },
+  { title: "Lviv", country: "Ukraine", latitude: 49.8397, longitude: 24.0297 },
+  { title: "Kharkiv", country: "Ukraine", latitude: 49.9935, longitude: 36.2304 },
+  { title: "Odesa", country: "Ukraine", latitude: 46.4825, longitude: 30.7233 },
+  { title: "Zaporizhzhia", country: "Ukraine", latitude: 47.8388, longitude: 35.1396 },
+  { title: "Dnipro", country: "Ukraine", latitude: 48.4647, longitude: 35.0462 },
+  { title: "Cherkasy", country: "Ukraine", latitude: 49.4444, longitude: 32.0598 },
+  { title: "Kremenchuk", country: "Ukraine", latitude: 49.0680, longitude: 33.4204 },
+  { title: "Kherson", country: "Ukraine", latitude: 46.6354, longitude: 32.6169 },
+  { title: "Uman", country: "Ukraine", latitude: 48.7484, longitude: 30.2218 },
+  { title: "Sumy", country: "Ukraine", latitude: 50.9077, longitude: 34.7981 },
+  { title: "Uzhhorod", country: "Ukraine", latitude: 48.6208, longitude: 22.2879 },
+  { title: "Mukachevo", country: "Ukraine", latitude: 48.4392, longitude: 22.7178 },
+  { title: "Trimiklini", country: "Cyprus", latitude: 34.84694, longitude: 32.91167 },
+{ title: "Moscow", country: "Russia", latitude: 55.7823, longitude: 37.4870 },
+{ title: "Saint Petersburg", country: "Russia", latitude: 59.894444, longitude: 30.264167 },
+{ title: "Voronezh", country: "Russia", latitude: 51.6606, longitude: 39.2006 },
+{ title: "Borisoglebsk", country: "Russia", latitude: 51.36713, longitude: 42.08494 }
 ];
 
 pointSeries.data.setAll(capitals);
 
 // The image credit
-var credit = chart.children.push(am5.Label.new(root, {
-  text: "Imagery: NASA Earth Observatory",
-  fontSize: 12,              // 12px text
-  fill: am5.color(0xffffff), // white, over the dark picture
-  fillOpacity: 0.6,
-  x: am5.p100,               // at the right edge...
-  centerX: am5.p100,         // ...measured from the label's right end...
-  dx: -10,                   // ...10px in from it
-  y: 10,                     // 10px from the top
-  visible: false             // shown with the satellite view only
-}));
+//var credit = chart.children.push(am5.Label.new(root, {
+//  text: "Imagery: NASA Earth Observatory",
+//  fontSize: 12,              // 12px text
+//  fill: am5.color(0xffffff), // white, over the dark picture
+//  fillOpacity: 0.6,
+//  x: am5.p100,               // at the right edge...
+//  centerX: am5.p100,         // ...measured from the label's right end...
+//  dx: -10,                   // ...10px in from it
+//  y: 10,                     // 10px from the top
+//  visible: true             // shown with the satellite view only
+//}));
 
 
 
