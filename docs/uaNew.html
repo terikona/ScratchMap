@@ -1,1 +1,306 @@
 
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Карта України</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #chartdiv {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="chartdiv"></div>
+
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+
+  <script>
+    // 1. Створюємо кореневий елемент карти
+    var root = am5.Root.new("chartdiv");
+
+    // 2. Створюємо карту
+    var chart = root.container.children.push(
+      am5map.MapChart.new(root, {
+        projection: am5map.geoMercator(),
+
+        
+
+
+
+
+
+
+
+        
+        // Початковий масштаб карти
+    //homeZoomLevel: 7,
+
+    // Початкова позиція карти 
+    /*
+    homeGeoPoint: {
+      longitude: 27,
+      latitude: 48
+    },
+        panX: "translateX",
+        panY: "translateY" */
+      })
+    );
+
+
+
+
+
+ 
+var levelButtons = chart.children.push(
+  am5.Container.new(root, {
+    x: am5.p100,
+    centerX: am5.p100,
+    y: 20,
+    dx: -10,
+    layout: root.verticalLayout,
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingLeft: 0,
+    paddingRight: 0
+  })
+);
+
+var levelButtonItems = {};
+var activeLevel = "regiony";
+
+function createLevelButton(level, label) {
+  var button = levelButtons.children.push(
+    am5.Container.new(root, {
+      width: 125,
+      layout: root.horizontalLayout,
+      paddingTop: 9,
+      paddingBottom: 9,
+      paddingLeft: 12,
+      paddingRight: 12,
+      marginBottom: 6,
+      cursorOverStyle: "pointer",
+      background: am5.RoundedRectangle.new(root, {
+        fill: root.interfaceColors.get("alternativeBackground"),
+        fillOpacity: 0.08,
+        stroke: root.interfaceColors.get("alternativeBackground"),
+        strokeOpacity: 0.3,
+        cornerRadiusTL: 5,
+        cornerRadiusTR: 5,
+        cornerRadiusBL: 5,
+        cornerRadiusBR: 5
+      })
+    })
+  );
+
+  var text = button.children.push(
+    am5.Label.new(root, {
+      text: label,
+      width: am5.p100,
+      textAlign: "center",
+      fontSize: 14,
+      fill: root.interfaceColors.get("text")
+    })
+  );
+
+  levelButtonItems[level] = {
+    container: button,
+    label: text
+  };
+
+
+  
+
+
+  button.events.on("click", function() {
+    switchMapLevel(level);
+  });
+}
+function filterSmallPolygons(geoJSON) {
+  geoJSON.features.forEach(function(feature) {
+    if (!feature.geometry) return;
+
+    // Обробляємо MultiPolygon
+    if (feature.geometry.type === "MultiPolygon") {
+      feature.geometry.coordinates =
+        feature.geometry.coordinates.filter(function(polygon) {
+          var ring = polygon[0];
+          if (!ring || ring.length === 0) return false;
+
+          var lons = ring.map(function(point) {
+            return point[0];
+          });
+
+          var lats = ring.map(function(point) {
+            return point[1];
+          });
+
+          var width = Math.max(...lons) - Math.min(...lons);
+          var height = Math.max(...lats) - Math.min(...lats);
+
+          return !(width <= 0.006 && height <= 0.007);
+        });
+    }
+  });
+
+  return geoJSON;
+}
+createLevelButton("regiony", "Області");
+createLevelButton("rayony", "Райони");
+createLevelButton("hromady", "Громади");
+
+// Підсвічуємо активний рівень карти
+function setActiveLevel(level) {
+  activeLevel = level;
+
+  Object.keys(levelButtonItems).forEach(function(name) {
+    var item = levelButtonItems[name];
+    var active = name === level;
+
+    item.container.get("background").setAll({
+      fillOpacity: active ? 0.25 : 0.08,
+      strokeOpacity: active ? 0.8 : 0.3
+    });
+
+    item.label.set("fontWeight", active ? "600" : "400");
+  });
+}
+
+var requestId = 0;
+
+function switchMapLevel(level) {
+  activeLevel = level;
+
+  // Оновлюємо вигляд кнопок
+  Object.keys(levelButtonItems).forEach(function(name) {
+    var item = levelButtonItems[name];
+    var active = name === level;
+
+    item.container.get("background").setAll({
+      fillOpacity: active ? 0.25 : 0.08,
+      strokeOpacity: active ? 0.8 : 0.3
+    });
+
+    item.label.set("fontWeight", active ? "600" : "400");
+  });
+
+  var mapFiles = {
+    regiony: "./UA/regiony.geojson",
+    rayony: "./UA/rayony.geojson",
+    hromady: "./UA/hromady.geojson"
+  };
+
+  var currentRequest = ++requestId;
+
+  fetch(mapFiles[level])
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error("Помилка завантаження: " + response.status);
+      }
+      return response.json();
+    })
+    .then(function(geoJSON) {
+      if (currentRequest !== requestId) return;
+      var feature659 = geoJSON.features.find(function(feature) {
+  return Number(feature.properties.id) === 659;
+});
+
+if (feature659) {
+  console.log("Полігон 659:", feature659.properties);
+  console.log("Тип геометрії:", feature659.geometry.type);
+  console.log("Координати:", feature659.geometry.coordinates);
+}
+
+      // Залишаємо наявний фільтр для рівня областей
+      if (level === "regiony") {
+        geoJSON.features = geoJSON.features.filter(function(feature) {
+          return feature.properties.fid !== 27;
+        });
+
+        var kherson = geoJSON.features.find(function(feature) {
+          return feature.properties.region === "Херсонська область";
+        });
+
+        if (kherson && kherson.geometry.type === "MultiPolygon") {
+          kherson.geometry.coordinates =
+            kherson.geometry.coordinates.filter(function(polygon) {
+              var ring = polygon[0];
+              if (!ring || !ring.length) return false;
+
+              var lons = ring.map(function(point) {
+                return point[0];
+              });
+              var lats = ring.map(function(point) {
+                return point[1];
+              });
+
+              var width = Math.max(...lons) - Math.min(...lons);
+              var height = Math.max(...lats) - Math.min(...lats);
+
+              return !(width <= 0.006 && height <= 0.007);
+            });
+        }
+      }
+if (level === "hromady") {
+  geoJSON.features = geoJSON.features.filter(function(feature) {
+    return Number(feature.properties.id) !== 660;
+  });
+}
+//if (level === "rayony" || level === "hromady") {
+  //geoJSON = filterSmallPolygons(geoJSON);
+//}
+
+      polygonSeries.set("geoJSON", geoJSON);
+
+      polygonSeries.events.once("datavalidated", function() {
+        if (currentRequest === requestId) {
+          chart.goHome();
+        }
+      });
+    })
+    .catch(function(error) {
+      if (currentRequest === requestId) {
+        console.error("Помилка завантаження карти:", error);
+      }
+    });
+}
+
+
+
+
+
+// При першому завантаженні активні «Області»
+setActiveLevel("regiony");
+
+
+    // 3. Створюємо шар полігонів
+    var polygonSeries = chart.series.push(
+      am5map.MapPolygonSeries.new(root, {})
+    );
+
+    // 4. Налаштовуємо зовнішній вигляд полігонів
+    polygonSeries.mapPolygons.template.setAll({
+      fill: am5.color(0x6f9e76),
+      stroke: am5.color(0xffffff),
+      strokeWidth: 1,
+      tooltipText: "{region} (ID: {id})"
+    });
+
+    switchMapLevel("regiony");
+  </script>
+
+</body>
+</html>
